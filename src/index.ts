@@ -1,8 +1,10 @@
 import {
-  JupyterLabPlugin
+  JupyterLab, JupyterLabPlugin
 } from '@jupyterlab/application';
 
-import '../style/index.css';
+import {
+  ILauncher
+} from '@jupyterlab/launcher';
 
 /**
  * Initialization data for the jupyterlab_sage2 extension.
@@ -10,9 +12,40 @@ import '../style/index.css';
 const extension: JupyterLabPlugin<void> = {
   id: 'jupyterlab_sage2',
   autoStart: true,
-  activate: (app) => {
-    console.log('JupyterLab extension jupyterlab_sage2 is activated!');
-  }
+  requires: [],
+  optional: [
+    ILauncher
+  ],
+  activate: activateSAGE2Plugin
 };
+
+function activateSAGE2Plugin(app : JupyterLab, launcher : ILauncher | null) {
+
+  const { commands } = app;
+
+  // The launcher callback.
+  let callback = (cwd: string, name: string) => {
+    return commands.execute(
+      'docmanager:new-untitled', { path: cwd, type: 'notebook' }
+    ).then(model => {
+      return commands.execute('docmanager:open', {
+        path: model.path
+      });
+    });
+  };
+
+  if (launcher) {
+    launcher.add({
+      displayName: "SAGE2",
+      category: 'Other',
+      name,
+      iconClass: 'jp-NotebookRunningIcon',
+      callback,
+      rank: 0
+    });
+  }
+}
+
+
 
 export default extension;
