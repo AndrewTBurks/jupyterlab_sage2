@@ -4,27 +4,44 @@
   "description": "A JupyterLab extension to integrate JupyterLab and SAGE2 into one scientific workflow.",
   "author": "Andrew Burks",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/*/*d.ts",
+    "lib/*/*.js",
+    "lib/*.d.ts",
+    "lib/*.js",
+    "schema/*.json",
+    "style/*.*"
+  ],
+  "directories": {
+    "lib": "lib/"
+  },
   "keywords": [
     "jupyter",
-    "jupyterlab"
+    "jupyterlab",
+    "SAGE2"
   ],
   "scripts": {
     "build": "tsc",
     "clean": "rimraf lib",
     "prepublish": "npm run build"
   },
-  "files": [
-    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}"
-  ],
   "jupyterlab": {
     "extension": true
   },
   "dependencies": {
     "@jupyterlab/application": "^0.10.0",
-    "@jupyterlab/launcher": "^0.10.0"
+    "@jupyterlab/apputils": "^0.10.0",
+    "@jupyterlab/launcher": "^0.10.0",
+    "@phosphor/widgets": "^1.5.0"
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
     "typescript": "~2.4.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndrewTBurks/jupyterlab_sage2.git"
+  },
+  "license": "MIT"
 }
