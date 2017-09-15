@@ -33,6 +33,8 @@
     "@jupyterlab/application": "^0.10.0",
     "@jupyterlab/apputils": "^0.10.0",
     "@jupyterlab/launcher": "^0.10.0",
+    "@jupyterlab/running": "^0.10.0",
+    "@jupyterlab/services": "^0.49.0",
     "@phosphor/widgets": "^1.5.0"
   },
   "devDependencies": {

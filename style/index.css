@@ -1,3 +1,25 @@
 .jp-SAGE2Icon {
-    background-image: url(sage2a-green_final.svg);
+  background-image: url(sage2a-green_final.svg);
+}
+
+.jp-SAGE2favicon {
+  background-image: url(icon.png);
+  width: 24px !important;
+}
+
+.jp-SAGE2-uiWrapper {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+
+  font-size: 32px;
+
+  font-weight: bold;
+
+  color: #00BA7B;
+}
+
+.jp-SAGE2-serverConnectForm {
+  font-size: 20px;
+  color: black;
 }
