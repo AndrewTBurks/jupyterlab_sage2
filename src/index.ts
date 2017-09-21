@@ -5,7 +5,7 @@ import {
 } from '@jupyterlab/application';
 
 import {
-  Dialog, showDialog, /*ICommandPalette,*/ IMainMenu, InstanceTracker, IInstanceTracker
+  Dialog, showDialog, /*ICommandPalette,*/ IMainMenu, InstanceTracker
 } from '@jupyterlab/apputils'
 
 import {
@@ -17,22 +17,20 @@ import {
 } from '@jupyterlab/services';
 
 import {
-  Token
-} from '@phosphor/coreutils';
-
-import {
   Menu//, Widget
 } from '@phosphor/widgets';
 
 import {
+  // JSONExt
+} from '@phosphor/coreutils';
+
+import {
   SAGE2
-} from './widget';
+} from './interface/widget';
 
-export
-interface ISAGE2Tracker extends IInstanceTracker<SAGE2> {};
-
-export
-const ISAGE2Tracker = new Token<ISAGE2Tracker>('jupyter.services.SAGE2-tracker');
+import {
+  ISAGE2Tracker
+} from './tracker';
 
 /**
  * Initialization data for the jupyterlab_sage2 extension.
@@ -65,8 +63,6 @@ namespace CommandIDs {
   const serverSend = 'sage2:server-send';
 };
 
-let _SAGE2Instances = 0;
-
 function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILayoutRestorer, launcher: ILauncher | null) : ISAGE2Tracker {
 
   const { commands } = app;
@@ -80,6 +76,12 @@ function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILa
 
   console.log("SAGE2 Loaded!");
   console.log("Commands:", commands.listCommands());
+
+  // restorer.restore(tracker, {
+  //   command: CommandIDs.createNew,
+  //   args: widget => ({ name: widget.session.name }),
+  //   name: widget => widget.session && widget.session.name
+  // });
 
   // The launcher callback.
   let callback = (cwd: string, name: string) => {
@@ -130,8 +132,7 @@ export
   let { commands, shell } = app;
 
   console.log(app.shell);
-  console.log(tracker);
-
+  console.log(tracker, tracker.currentWidget);
 
   /**
    * Whether there is an active sage2.
@@ -149,7 +150,7 @@ export
 
       // let name = args['name'] as string;
       let sage2 = new SAGE2();
-      sage2.id = "sage2-" + _SAGE2Instances++;
+      // sage2.id = "sage2-" + _SAGE2Instances++;
       sage2.title.closable = true;
       sage2.title.icon = "jp-SAGE2favicon";
       sage2.title.label = 'SAGE2';
