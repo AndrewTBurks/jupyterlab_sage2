@@ -1,28 +1,27 @@
 import * as vdom from '@phosphor/virtualdom';
 
-import {
-  VDomModel, VDomRenderer
-} from '@jupyterlab/apputils';
-
+/* tslint:disable */
+/**
+ * We have configured the TSX transform to look for the h function in the local
+ * module.
+ */
 const h = vdom.h;
+/* tslint:enable */
 
 export class ServerConnection {
   constructor(options : ServerConnection.IOptions) {
-    // create html element 
-
+    // create html element
+    this._url = options.url;
+    this._name = options.name ? options.name : "SAGE2 Server";
   }
 
-  createElement(data) : vdom.VirtualElement {
-
+  createElement() : vdom.VirtualElement{
     return (
-      <div class="jp-SAGE2-serverConnection">
-
+      <div className="jp-SAGE2-serverConnection">
+        <h3>{this._name}</h3>
+        <h4>{this._url}</h4>
       </div>
     );
-  }
-
-  remove() {
-    this._element.remove();
   }
 
   // get the name of a connection
@@ -47,12 +46,10 @@ export class ServerConnection {
   private _url : string;
 }
 
+export
 namespace ServerConnection {
   export
   interface IOptions {
-    // node for the connection to be appended to
-    parent: HTMLElement,
-
     // A name for the server
     name?: string,
 

@@ -13,7 +13,6 @@
   padding: 10px;
   font-size: 32px;
   font-weight: bold;
-  color: #00ba7b;
 }
 
 .jp-SAGE2-serverConnectForm {
@@ -21,8 +20,31 @@
   color: black;
 }
 
+
+/* ========================= */
+
+.jp-SAGE2-body {
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  background: #eeeeee;
+}
+
+.jp-SAGE2-title {
+  font-family: Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+.jp-SAGE2-connections {
+  /* background-image: url(sage2a-green_final.svg); */
+}
+
 .jp-SAGE2-serverConnection {
-  width: 100px;
-  height: 100px;
-  background-image: url(sage2a-green_final.svg);
+  text-align: center;
+  color: #00ba7b;
+  padding: 15px;
+  display: inline-block;
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: white;
 }
