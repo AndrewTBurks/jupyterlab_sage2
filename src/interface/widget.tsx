@@ -1,9 +1,10 @@
+// import { DisposableDelegate } from '@phosphor/disposable/lib';
 import {
   // Widget
 } from '@phosphor/widgets';
 
 import {
-  // DisposableDelegate, IDisposable
+  DisposableDelegate
 } from '@phosphor/disposable';
 
 import {
@@ -60,6 +61,8 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   constructor(options : Partial<SAGE2.IOptions> = {}) {
     super();
     this.id = "sage2-" + _SAGE2Instances++;
+
+    this.addServer({ url: "http://thor.evl.uic.edu", name: "ICE Wall" });
     // this._wsio = null;
 
     // // let that = this;
@@ -131,21 +134,47 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   // }
 
   protected render(): vdom.VirtualNode | vdom.VirtualNode[] {
-    this._connections.push(new ServerConnection({url: "thor.evl.uic.edu"}));
-
     let servers = this._connections.map(connection => connection.createElement())
+
+    let addonclick = () => {
+      this.addServer();
+    };
 
     return (
       <div className="jp-SAGE2-body">
         <div className="jp-SAGE2-title">
-          <h1>Server Connections</h1>
+          {/* <h1>Server Connections</h1> */}
+          {/* <img src="../../style/sage2a-green_final.svg" alt="Server Connections"/> */}
         </div>
         <hr></hr>
         <div className="jp-SAGE2-connections">
           {servers}
+          <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
+            +
+          </button>
         </div>
       </div>
     );
+  }
+
+  public addServer(options?: ServerConnection.IOptions) {
+    if (!options) {
+      options = {url: "https://localhost:9000", "name": "Local SAGE2 Server"};
+    }
+
+    let connection = new ServerConnection(options);
+    this._connections.push(connection);
+    this.update();
+
+    let delegate = new DisposableDelegate(() => {
+      let ind = this._connections.indexOf(connection);
+      this._connections.splice(ind, 1);
+
+      this.update();
+    })
+
+    connection.onremove(delegate);
+    connection.onupdate(this.update.bind(this));
   }
 
   // private startConnection() {
