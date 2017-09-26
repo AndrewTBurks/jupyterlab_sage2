@@ -1,5 +1,6 @@
 import { DisposableDelegate } from '@phosphor/disposable/lib';
 import * as vdom from '@phosphor/virtualdom';
+import WebsocketIO from '../websocket.io';
 
 /* tslint:disable */
 /**
@@ -93,6 +94,12 @@ export class ServerConnection {
 
   private startEditing() {
     this._editing = true;
+
+    if (this._wsio) {
+      this._wsio.close();
+      this._wsio = null;
+    }
+
     this._update();
   }
 
@@ -100,11 +107,37 @@ export class ServerConnection {
     this._editing = false;
     // ensure correct URL formatting
     this._url = this._url.indexOf("http://") || this._url.indexOf("https://") ? this._url : "http://" + this._url;
+
+    let that = this;
+
+    this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
+    this._wsio.open(function() {
+      console.log(`Connection to ${that._url} open`);
+      var clientDescription = {
+          clientType: "jupyter",
+          requests: {
+            config: true,
+            version: true,
+            time: false,
+            console: false
+          },
+        };
+        that._wsio.on('initialize', function (data : any) {
+          that._id = data.UID;
+          // that.startConnection();
+
+          // form.remove();
+        });
+        that._wsio.emit('addClient', clientDescription);
+    });
+    
     this._update();
   }
 
   private _name : string = "SAGE2 Server";
   private _url : string = "http://sage2.server.address.com";
+  private _id : string = null;
+  private _wsio : WebsocketIO = null;
 
   private _editing: boolean = true;
   private _remove: DisposableDelegate;
@@ -120,5 +153,11 @@ namespace ServerConnection {
 
     // the server's url
     url: string
-  }
+  };
+
+  export
+  const defaultOptions : IOptions = {
+    url: 'http://localhost:9090',
+    name: "Local SAGE2 Server"
+  };
 }

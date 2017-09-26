@@ -4,7 +4,7 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  DisposableDelegate
+  // DisposableDelegate
 } from '@phosphor/disposable';
 
 import {
@@ -60,9 +60,10 @@ export
 class SAGE2 extends VDomRenderer<SAGE2Model> {
   constructor(options : Partial<SAGE2.IOptions> = {}) {
     super();
-    this.id = "sage2-" + _SAGE2Instances++;
+    this.id = "jp-SAGE2-" + _SAGE2Instances++;
+    this.title.label = "SAGE2";
 
-    this.addServer({ url: "http://thor.evl.uic.edu", name: "ICE Wall" });
+    // this.addServer({ url: "http://thor.evl.uic.edu", name: "ICE Wall" });
     // this._wsio = null;
 
     // // let that = this;
@@ -134,7 +135,7 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   // }
 
   protected render(): vdom.VirtualNode | vdom.VirtualNode[] {
-    let servers = this._connections.map(connection => connection.createElement())
+    let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
 
     let addonclick = () => {
       this.addServer();
@@ -157,25 +158,25 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
     );
   }
 
-  public addServer(options?: ServerConnection.IOptions) {
-    if (!options) {
-      options = {url: "https://localhost:9000", "name": "Local SAGE2 Server"};
-    }
+  // public addServer(options?: ServerConnection.IOptions) {
+  //   if (!options) {
+  //     options = {url: "https://localhost:9000", "name": "Local SAGE2 Server"};
+  //   }
 
-    let connection = new ServerConnection(options);
-    this._connections.push(connection);
-    this.update();
+  //   let connection = new ServerConnection(options);
+  //   this._connections.push(connection);
+  //   this.update();
 
-    let delegate = new DisposableDelegate(() => {
-      let ind = this._connections.indexOf(connection);
-      this._connections.splice(ind, 1);
+  //   let delegate = new DisposableDelegate(() => {
+  //     let ind = this._connections.indexOf(connection);
+  //     this._connections.splice(ind, 1);
 
-      this.update();
-    })
+  //     this.update();
+  //   });
 
-    connection.onremove(delegate);
-    connection.onupdate(this.update.bind(this));
-  }
+  //   connection.onremove(delegate);
+  //   connection.onupdate(this.update.bind(this));
+  // }
 
   // private startConnection() {
   //   console.log("Starting connection to server");
@@ -193,21 +194,20 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   //     width: 600, height: 600
   //   });
   // }
-
-  // private _server: string | null = null;
-  // private _wsio : any;
-  private _connections: Array<ServerConnection> = [];
+  
+  public getConnections: Function = null;
+  public addServer: Function = null;
 }
 
 export
 namespace SAGE2 {
   export
   interface IOptions {
-    ip: string;
+    id: string
   };
 
-  export
-  const defaultOptions : IOptions = {
-    ip: "127.0.0.1"
-  };
+  // export
+  // const defaultOptions : IOptions = {
+  //   // ip: "127.0.0.1"
+  // };
 }

@@ -1,3 +1,4 @@
+import { ServerConnection } from './interface/ui-elements';
 import '../style/index.css';
 
 import {
@@ -21,8 +22,12 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  // JSONExt
+  // JSONObject
 } from '@phosphor/coreutils';
+
+import {
+  DisposableDelegate
+} from '@phosphor/disposable';
 
 import {
   SAGE2
@@ -51,7 +56,7 @@ const extension: JupyterLabPlugin<ISAGE2Tracker> = {
 
 namespace CommandIDs {
   export
-  const createNew = "sage2:create-new";
+  const openWidget = "sage2:open-widget";
 
   export
   const serverConnect = 'sage2:server-connect';
@@ -63,12 +68,15 @@ namespace CommandIDs {
   const serverSend = 'sage2:server-send';
 };
 
+const _SAGE2_Connections = Array<ServerConnection>();
+let tracker : InstanceTracker<SAGE2> = null;
+
 function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILayoutRestorer, launcher: ILauncher | null) : ISAGE2Tracker {
 
   const { commands } = app;
   // const category = "SAGE2";
   const namespace = 'sage2';
-  const tracker = new InstanceTracker<SAGE2>({ namespace });
+  tracker = new InstanceTracker<SAGE2>({ namespace });
 
   Session.listRunning().then(sessionModels => {
     console.log(sessionModels);
@@ -86,7 +94,12 @@ function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILa
   // The launcher callback.
   let callback = (cwd: string, name: string) => {
     console.log(name);
-    return commands.execute('sage2:create-new', {})
+    
+    // return commands.execute('sage2:open-widget', { "connections": _SAGE2_Connections })
+    return commands.execute(
+      'sage2:open-widget', 
+      {}
+    );
   };
 
   if (launcher) {
@@ -142,11 +155,11 @@ export
   }
 
   // Add sage2 commands.
-  commands.addCommand(CommandIDs.createNew, {
+  commands.addCommand(CommandIDs.openWidget, {
     label: 'New SAGE2 Window',
     caption: 'Start a new SAGE2 Connection',
     execute: args => {
-      console.log ("Start new SAGE2 Window");
+      console.log ("Start SAGE2 Widget");
 
       // let name = args['name'] as string;
       let sage2 = new SAGE2();
@@ -155,9 +168,21 @@ export
       sage2.title.icon = "jp-SAGE2favicon";
       sage2.title.label = 'SAGE2';
 
+      sage2.getConnections = () => {
+        return _SAGE2_Connections;
+      };
+
+      sage2.addServer = () => {
+        commands.execute(CommandIDs.serverConnect, {});
+      }
       
-      // tracker.add(sage2);
+      tracker.add(sage2);
+
+      // add tab to main area
       shell.addToMainArea(sage2);
+
+      // switch to the tab
+      shell.activateById(sage2.id);
     }
   });
 
@@ -184,23 +209,35 @@ export
   commands.addCommand(CommandIDs.serverConnect, {
     label: 'Connect to SAGE2 Server',
     execute: args => {
-      return showDialog({
-        title: 'Connect to SAGE2',
-        body: `What server do you want to connect to?`,
-        buttons: [Dialog.cancelButton(), Dialog.warnButton()]
-      }).then(result => {
-        if (result.button.accept) {
-          console.log("Connect");
-          return;
-        } else {
-          console.log("Cancel")
-          return;
-        }
+      console.log(CommandIDs.serverConnect, _SAGE2_Connections);
+
+      let options : ServerConnection.IOptions = ServerConnection.defaultOptions;
+
+      let newConnection = new ServerConnection(options);
+      let delegate = new DisposableDelegate(() => {
+        let ind = _SAGE2_Connections.indexOf(newConnection);
+        _SAGE2_Connections.splice(ind, 1);
+
+        updateWidget();
       });
-    },
-    isEnabled: hasWidget
+
+      newConnection.onupdate(updateWidget);
+      newConnection.onremove(delegate)
+
+      _SAGE2_Connections.push(newConnection);
+
+      if (tracker.currentWidget) {
+        tracker.currentWidget.update();
+      }
+    }
+    // isEnabled: hasWidget
   });
 }
 
+function updateWidget() {
+  if (tracker.currentWidget) {
+    tracker.currentWidget.update();
+  }
+}
 
 export default extension;
