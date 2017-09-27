@@ -115,10 +115,20 @@ class WebSocketIO {
         var buffer = uInt8.subarray(4, uInt8.length);
         _this.messages[fName](buffer);
       }
+
+
+      if (_this._logger) {
+        _this._logger(["Recv", fName]);
+      }
     };
     // triggered by unexpected close event
     this.ws.onclose = function (evt: Event) {
+      if (_this._logger) {
+        _this._logger(["Recv", "Close"]);
+      }
+
       console.log("WebsocketIO> socket closed");
+      
       if ('close' in _this.messages) {
         _this.messages.close(evt);
       }
@@ -176,6 +186,10 @@ class WebSocketIO {
       return;
     }
 
+    if (this._logger) {
+      this._logger(["Send", name]);
+    }
+
     // send binary data as array buffer
     if (data instanceof Uint8Array) {
       // build an array with the name of the function
@@ -210,10 +224,21 @@ class WebSocketIO {
     // disable onclose handler first
     this.ws.onclose = function () {};
     // log close
-    console.log("WebsocketIO> socket closed");    
+    console.log("WebsocketIO> socket closed"); 
+
+    if (this._logger) {
+      this._logger(["Send", "Close"]);
+    }
+    
     // then close
     this.ws.close();
   };
+
+  set logger(logFunction : Function) {
+    this._logger = logFunction;
+  }
+
+  private _logger : Function = null;
 }
 
 export default WebSocketIO;

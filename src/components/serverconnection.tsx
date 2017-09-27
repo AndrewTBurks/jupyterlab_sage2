@@ -33,6 +33,16 @@ export class ServerConnection {
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
+    let log: vdom.VirtualNode[] = this._log.map((item) => {
+      return (
+        <div className="jp-SAGE2-socketLogItem">
+          <p>
+            {item[0]}> {item[1]}
+          </p>
+        </div>
+      );
+    });
+
     return (
       <div className={classNames}>
         <h4>{this._name}</h4>
@@ -44,6 +54,9 @@ export class ServerConnection {
           <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onclick={remove}>
             Remove
           </button>
+        </div>
+        <div className="jp-SAGE2-socketLog">
+          {log}
         </div>
       </div>
     );
@@ -125,6 +138,8 @@ export class ServerConnection {
     let that = this;
 
     this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
+    this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
+
     this._wsio.open(function() {
       var clientDescription = {
           clientType: "jupyter",
@@ -157,11 +172,19 @@ export class ServerConnection {
     this._update();
   }
 
+  private log(event: Array<string>) {
+    this._log.unshift(event);
+
+    this._update();
+  }
+
   private _name : string = "SAGE2 Server";
   private _url : string = "http://sage2.server.address.com";
   private _id : string = null;
   private _wsio : WebsocketIO = null;
   private _connected: boolean = false;
+
+  private _log : Array<Array<string>> = [];
 
   private _editing: boolean = true;
   private _remove: DisposableDelegate;

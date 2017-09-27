@@ -153,3 +153,22 @@
   background-color: #00ba7b !important;
   margin-right: 5px;
 }
+
+.jp-SAGE2-socketLog {
+  background-color: black;
+  color: #e0e0e0;
+  font-family: monospace;
+
+  width: 350px;
+  height: 200px;
+  margin-top: 15px;
+  padding: 10px;
+  
+  border-radius: 5px;
+  overflow-y: scroll;
+  text-align: left;
+}
+
+.jp-SAGE2-socketLogItem {
+  display: block;
+}
