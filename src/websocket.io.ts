@@ -204,11 +204,13 @@ class WebSocketIO {
   /**
    * Deliberate close function
    *
-   * @method emit
+   * @method close
    */
   public close() {
     // disable onclose handler first
     this.ws.onclose = function () {};
+    // log close
+    console.log("WebsocketIO> socket closed");    
     // then close
     this.ws.close();
   };

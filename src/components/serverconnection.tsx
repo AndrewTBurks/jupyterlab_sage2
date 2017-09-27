@@ -23,13 +23,17 @@ export class ServerConnection {
 
   private establishedServer() : vdom.VirtualElement {
     // wrap this._remove in lambda
-    let remove = () => this._remove.dispose();
+    let remove = () => {
+      // close websocket
+      this._wsio.close();
+      // dispose of item      
+      this._remove.dispose();
+    }
     let edit = () => this.startEditing();
 
     return (
       <div className="jp-SAGE2-serverConnection">
         <h4>{this._name}</h4>
-        {/* <a>{this._url}</a> */}
         <a target="about:blank" href={this._url}>{this._url}</a>
         <div className="jp-SAGE2-serverButtons">
           <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onclick={edit}>
@@ -84,6 +88,14 @@ export class ServerConnection {
     // update UI element to match
   }
 
+  get url() : string {
+    return this._url;
+  }
+
+  set url(url : string) {
+    this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
+  }
+
   public onremove(delegate : DisposableDelegate) {
     this._remove = delegate;
   }
@@ -112,7 +124,6 @@ export class ServerConnection {
 
     this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
     this._wsio.open(function() {
-      console.log(`Connection to ${that._url} open`);
       var clientDescription = {
           clientType: "jupyter",
           requests: {
@@ -125,8 +136,6 @@ export class ServerConnection {
         that._wsio.on('initialize', function (data : any) {
           that._id = data.UID;
           // that.startConnection();
-
-          // form.remove();
         });
         that._wsio.emit('addClient', clientDescription);
     });
@@ -157,7 +166,7 @@ namespace ServerConnection {
 
   export
   const defaultOptions : IOptions = {
-    url: 'http://localhost:9090',
+    url: 'https://localhost:9090',
     name: "Local SAGE2 Server"
   };
 }

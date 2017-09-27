@@ -62,77 +62,7 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
     super();
     this.id = "jp-SAGE2-" + _SAGE2Instances++;
     this.title.label = "SAGE2";
-
-    // this.addServer({ url: "http://thor.evl.uic.edu", name: "ICE Wall" });
-    // this._wsio = null;
-
-    // // let that = this;
-
-    // let node = this.node;
-
-    // let mainUI = this._sage2window = document.createElement("div");
-    // mainUI.classList.add("jp-SAGE2-uiWrapper");
-    // mainUI.innerText = "Hello to SAGE2!";
-
-    // node.appendChild(mainUI);
-
-    // let form = document.createElement("div");
-    // let label = document.createElement("label");
-    // let input = document.createElement("input");
-    // let go = document.createElement("button");
-
-    // form.classList.add("jp-SAGE2-serverConnectForm");
-
-    // label.innerText = "Server Address: "
-    // label.htmlFor = `sage2-inputlabel`;
-
-    // input.id = `sage2-inputlabel`;
-
-    // go.innerText = "Connect";
-    // go.id = "sage2-gobutton";
-
-    // form.appendChild(label);
-    // form.appendChild(input);
-    // form.appendChild(go);
-
-    // mainUI.appendChild(form);
-    
-    // let that = this;
-    // go.addEventListener("click", () => {
-    //   console.log("connect to ", (<HTMLInputElement>document.getElementById(input.id)).value);
-
-    //   this._server = (<HTMLInputElement>document.getElementById(input.id)).value;
-    //   this._session.setName(this._server);
-
-    //   this._wsio = new WebsocketIO(this._server);
-    //   this._wsio.open(function () {
-    //     var clientDescription = {
-    //       clientType: "jupyter",
-    //       requests: {
-    //         config: true,
-    //         version: true,
-    //         time: false,
-    //         console: false
-    //       },
-    //     };
-    //     that._wsio.on('initialize', function (data : any) {
-    //       that.id = data.UID;
-    //       that.startConnection();
-
-    //       form.remove();
-    //     });
-    //     that._wsio.emit('addClient', clientDescription);
-    //   });
-    // });
   }
-
-  // get serverAddress(): String | null {
-  //   return this._server;
-  // }
-
-  // set serverAddress(value : String | null) {
-
-  // }
 
   protected render(): vdom.VirtualNode | vdom.VirtualNode[] {
     let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
@@ -146,13 +76,13 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
         <div className="jp-SAGE2-title">
           {/* <h1>Server Connections</h1> */}
           {/* <img src="../../style/sage2a-green_final.svg" alt="Server Connections"/> */}
+          <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
+            <i className="fa fa-3x fa-plus-circle"></i>
+          </button>
         </div>
         <hr></hr>
         <div className="jp-SAGE2-connections">
           {servers}
-          <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
-            +
-          </button>
         </div>
       </div>
     );

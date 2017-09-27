@@ -70,6 +70,7 @@ namespace CommandIDs {
 
 const _SAGE2_Connections = Array<ServerConnection>();
 let tracker : InstanceTracker<SAGE2> = null;
+let menu : Menu = null;
 
 function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILayoutRestorer, launcher: ILauncher | null) : ISAGE2Tracker {
 
@@ -113,9 +114,10 @@ function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILa
     });
   }
 
-  addCommands(app, tracker);
+  addCommands(app, tracker, mainMenu);
 
-  mainMenu.addMenu(createMenu(app), { rank: 20 });
+  menu = createMenu(app);
+  mainMenu.addMenu(menu, { rank: 20 });
 
   return tracker;
 }
@@ -129,19 +131,25 @@ function createMenu(app: JupyterLab): Menu {
   let connection = new Menu({ commands });
 
   menu.title.label = 'SAGE2';
-  connection.title.label = 'Settings';
-  connection.addItem({ command: CommandIDs.serverConnect });
-  connection.addItem({ command: CommandIDs.serverDisconnect });
+  connection.title.label = 'Send to';
+  menu.addItem({ command: CommandIDs.serverConnect });
+  menu.addItem({ command: CommandIDs.serverDisconnect });
 
   menu.addItem({ command: CommandIDs.serverSend });
   menu.addItem({ type: 'separator' });
   menu.addItem({ type: 'submenu', submenu: connection });
 
+  _SAGE2_Connections.forEach(server => {
+    let item = connection.addItem({command: CommandIDs.serverSend, args: { url: server.url }});
+    console.log(item);
+    // item.label = server.name;
+  });
+
   return menu;
 }
 
 export
-  function addCommands(app: JupyterLab, tracker: InstanceTracker<SAGE2>) {
+  function addCommands(app: JupyterLab, tracker: InstanceTracker<SAGE2>, mainMenu: IMainMenu) {
   let { commands, shell } = app;
 
   console.log(app.shell);
@@ -229,8 +237,22 @@ export
       if (tracker.currentWidget) {
         tracker.currentWidget.update();
       }
+
+      // remove old menu
+      menu.dispose();
+      // add new meny with new list of servers
+      menu = createMenu(app);
+      mainMenu.addMenu(menu, { rank: 20 });
+      
     }
     // isEnabled: hasWidget
+  });
+
+  commands.addCommand(CommandIDs.serverSend, {
+    label: 'Send to',
+    execute: args => {
+      console.log(CommandIDs.serverSend, args);
+    }
   });
 }
 
