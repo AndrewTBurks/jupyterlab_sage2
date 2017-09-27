@@ -76,14 +76,14 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
         <div className="jp-SAGE2-title">
           {/* <h1>Server Connections</h1> */}
           {/* <img src="../../style/sage2a-green_final.svg" alt="Server Connections"/> */}
-          <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
-            <i className="fa fa-3x fa-plus-circle"></i>
-          </button>
         </div>
         <hr></hr>
         <div className="jp-SAGE2-connections">
           {servers}
         </div>
+        <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
+          <i className="fa fa-3x fa-plus-circle"></i>
+        </button>
       </div>
     );
   }

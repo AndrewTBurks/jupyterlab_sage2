@@ -14,6 +14,10 @@ import {
 } from '@jupyterlab/launcher';
 
 import {
+  Notebook, NotebookPanel
+} from '@jupyterlab/notebook';
+
+import {
   Session
 } from '@jupyterlab/services';
 
@@ -270,6 +274,13 @@ export
         if (result.button.accept) {
           let index = ArrayExt.findFirstIndex(_SAGE2_Connections, (conn) => conn.url === result.button.caption);
           let connection = _SAGE2_Connections[index];
+
+
+          console.log(shell.currentWidget, shell.activeWidget);
+          // if (shell.currentWidget && shell.activeWidget) {
+
+          // }
+
           console.log("Send to", connection);
           return;
         } else {
@@ -278,7 +289,21 @@ export
         }
       });
     },
-    isEnabled: () => _SAGE2_Connections.length > 0
+    isEnabled: () => {
+      console.log(shell.currentWidget);
+      let isNotebook = shell.currentWidget instanceof NotebookPanel;
+      console.log(isNotebook);
+      
+      // let isNotebook = typeof shell.currentWidget === "NotebookPanel";
+
+      if (isNotebook) {
+        let selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell;
+        console.log(selectedCell);
+      }
+
+
+      return (_SAGE2_Connections.length > 0) && isNotebook;
+    }
   });
 }
 
