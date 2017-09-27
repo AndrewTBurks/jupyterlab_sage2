@@ -31,8 +31,10 @@ export class ServerConnection {
     }
     let edit = () => this.startEditing();
 
+    let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
+
     return (
-      <div className="jp-SAGE2-serverConnection">
+      <div className={classNames}>
         <h4>{this._name}</h4>
         <a target="about:blank" href={this._url}>{this._url}</a>
         <div className="jp-SAGE2-serverButtons">
@@ -133,10 +135,22 @@ export class ServerConnection {
             console: false
           },
         };
+
+        
         that._wsio.on('initialize', function (data : any) {
           that._id = data.UID;
+          that._connected = true;
+
+          that._update();
           // that.startConnection();
         });
+
+        that._wsio.on('close', function(data : any) {
+          that._connected = false;
+
+          that._update();
+        });
+
         that._wsio.emit('addClient', clientDescription);
     });
     
@@ -147,6 +161,7 @@ export class ServerConnection {
   private _url : string = "http://sage2.server.address.com";
   private _id : string = null;
   private _wsio : WebsocketIO = null;
+  private _connected: boolean = false;
 
   private _editing: boolean = true;
   private _remove: DisposableDelegate;

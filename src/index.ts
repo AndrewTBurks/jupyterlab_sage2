@@ -30,6 +30,10 @@ import {
 } from '@phosphor/disposable';
 
 import {
+  ArrayExt
+} from '@phosphor/algorithm';
+
+import {
   SAGE2
 } from './interface/widget';
 
@@ -136,14 +140,14 @@ function createMenu(app: JupyterLab): Menu {
   menu.addItem({ command: CommandIDs.serverDisconnect });
 
   menu.addItem({ command: CommandIDs.serverSend });
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ type: 'submenu', submenu: connection });
+  // menu.addItem({ type: 'separator' });
+  // menu.addItem({ type: 'submenu', submenu: connection });
 
-  _SAGE2_Connections.forEach(server => {
-    let item = connection.addItem({command: CommandIDs.serverSend, args: { url: server.url }});
-    console.log(item);
-    // item.label = server.name;
-  });
+  // _SAGE2_Connections.forEach(server => {
+  //   let item = connection.addItem({command: CommandIDs.serverSend, args: { url: server.url }});
+  //   console.log(item);
+  //   // item.label = server.name;
+  // });
 
   return menu;
 }
@@ -238,21 +242,43 @@ export
         tracker.currentWidget.update();
       }
 
-      // remove old menu
-      menu.dispose();
-      // add new meny with new list of servers
-      menu = createMenu(app);
-      mainMenu.addMenu(menu, { rank: 20 });
+      // // remove old menu
+      // menu.dispose();
+      // // add new meny with new list of servers
+      // menu = createMenu(app);
+      // mainMenu.addMenu(menu, { rank: 20 });
       
     }
     // isEnabled: hasWidget
   });
 
   commands.addCommand(CommandIDs.serverSend, {
-    label: 'Send to',
+    label: 'Send Cell to SAGE2',
     execute: args => {
-      console.log(CommandIDs.serverSend, args);
-    }
+      return showDialog({
+        title: 'Send Cell to a SAGE2 Server',
+        body: `Choose a server to send to: `,
+        buttons: [
+          ..._SAGE2_Connections.map((connection) => Dialog.createButton({
+            label: connection.name,
+            caption: connection.url,
+            className: "jp-SAGE2-dialogButton",
+          })),
+          Dialog.cancelButton()
+        ]
+      }).then(result => {
+        if (result.button.accept) {
+          let index = ArrayExt.findFirstIndex(_SAGE2_Connections, (conn) => conn.url === result.button.caption);
+          let connection = _SAGE2_Connections[index];
+          console.log("Send to", connection);
+          return;
+        } else {
+          console.log("Cancel")
+          return;
+        }
+      });
+    },
+    isEnabled: () => _SAGE2_Connections.length > 0
   });
 }
 

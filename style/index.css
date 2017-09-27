@@ -121,6 +121,10 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.jp-SAGE2-serverNotConnected {
+  background-color: rgb(255, 198, 198);
+}
+
 .jp-SAGE2-serverConnection a {
   font-weight: bold;
   display: block;
@@ -143,4 +147,9 @@
   color: #ffffff;
   background-color: #d9534f;
   border-color: #d43f3a;
+}
+
+.jp-SAGE2-dialogButton {
+  background-color: #00ba7b !important;
+  margin-right: 5px;
 }
