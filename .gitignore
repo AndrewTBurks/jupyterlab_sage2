@@ -3,3 +3,5 @@ lib/
 node_modules/
 *.egg-info/
 PythonDataScienceHandbook/
+*.ipynb
+.ipynb_checkpoints/
