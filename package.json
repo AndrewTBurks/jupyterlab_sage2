@@ -11,7 +11,8 @@
     "lib/*.d.ts",
     "lib/*.js",
     "schema/*.json",
-    "style/*.*"
+    "style/out/*.*",
+    "style/img/*.*"
   ],
   "directories": {
     "lib": "lib/"
@@ -22,7 +23,9 @@
     "SAGE2"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run buildts & npm run buildless",
+    "buildts": "tsc",
+    "buildless": "lessc style/src/index.less style/out/index.css",
     "clean": "rimraf lib",
     "watch": "tsc -w",
     "prepublish": "npm run build"
@@ -42,6 +45,7 @@
     "@phosphor/widgets": "^1.5.0"
   },
   "devDependencies": {
+    "less": "^2.7.2",
     "rimraf": "^2.6.2",
     "typescript": "~2.4.1"
   },

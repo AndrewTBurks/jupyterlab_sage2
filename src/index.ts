@@ -1,5 +1,5 @@
 import { ServerConnection } from './interface/ui-elements';
-import '../style/index.css';
+import '../style/out/index.css';
 
 import {
   JupyterLab, JupyterLabPlugin, ILayoutRestorer
@@ -276,15 +276,10 @@ export
           let index = ArrayExt.findFirstIndex(_SAGE2_Connections, (conn) => conn.url === result.button.caption);
           let connection = _SAGE2_Connections[index];
 
+          let outputCell = ((shell.currentWidget as NotebookPanel).notebook.activeCell);
+          console.log(outputCell);
 
-          console.log(shell.currentWidget, shell.activeWidget);
-          // if (shell.currentWidget && shell.activeWidget) {
-
-          // }
-
-          let outputCell = (shell.currentWidget as NotebookPanel).notebook.activeCell.outputArea
-
-          console.log("Send", , "to", connection);
+          console.log("Send", outputCell, "to", connection);
           return;
         } else {
           console.log("Cancel")
