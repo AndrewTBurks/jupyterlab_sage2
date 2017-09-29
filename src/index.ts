@@ -14,7 +14,8 @@ import {
 } from '@jupyterlab/launcher';
 
 import {
-  Notebook, NotebookPanel
+  // Notebook, 
+  NotebookPanel
 } from '@jupyterlab/notebook';
 
 import {
@@ -281,7 +282,9 @@ export
 
           // }
 
-          console.log("Send to", connection);
+          let outputCell = (shell.currentWidget as NotebookPanel).notebook.activeCell.outputArea
+
+          console.log("Send", , "to", connection);
           return;
         } else {
           console.log("Cancel")
@@ -291,18 +294,21 @@ export
     },
     isEnabled: () => {
       console.log(shell.currentWidget);
-      let isNotebook = shell.currentWidget instanceof NotebookPanel;
-      console.log(isNotebook);
-      
-      // let isNotebook = typeof shell.currentWidget === "NotebookPanel";
 
-      if (isNotebook) {
-        let selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell;
+      let selectedCell = null;
+      let notebook = (shell.currentWidget instanceof NotebookPanel) ? shell.currentWidget as NotebookPanel : null;
+      console.log(notebook);
+
+
+      if (notebook) {
+        selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell;
         console.log(selectedCell);
       }
 
+      console.log((_SAGE2_Connections.length > 0), notebook !== null)
 
-      return (_SAGE2_Connections.length > 0) && isNotebook;
+
+      return (_SAGE2_Connections.length > 0) && notebook !== null;
     }
   });
 }
