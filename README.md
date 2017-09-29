@@ -10,7 +10,10 @@ A JupyterLab extension to integrate JupyterLab and SAGE2 into one scientific wor
 ## Installation
 
 ```bash
-jupyter labextension install jupyterlab_sage2
+git clone git://github.com/AndrewTBurks/jupyterlab_sage2.git
+cd jupyterlab_sage2
+npm install
+jupyter labextension install .
 ```
 
 ## Development
