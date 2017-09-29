@@ -1,5 +1,6 @@
 *.bundle.*
 lib/
+style/out/
 node_modules/
 *.egg-info/
 PythonDataScienceHandbook/
