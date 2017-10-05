@@ -296,8 +296,11 @@ export
 
           let notebook = (shell.currentWidget as NotebookPanel).notebook;
           let codeCell = (notebook.activeCell) as any;
-          let outputArea = codeCell.model.outputs;
+          let cellModel = codeCell.model;
+          let outputArea = cellModel.outputs;
           let outputData = outputArea.get(0).data;
+
+          console.log(codeCell, cellModel, outputArea);
 
           let dataToSend = null;
 
@@ -305,15 +308,19 @@ export
             if (outputData[mime]) {
               // send data to connection if supported type
 
-              // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
-              outputArea.changed.connect(function (outputAreaModel: any) {
-                let newOutput = outputAreaModel.get(0);
-
-                if (newOutput && newOutput.data[mime]) {
-                  this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
-                }  
-              }, connection);
-
+              // if the cell is not registered for updates, register it
+              if (!connection.isCellRegistered(cellModel.id)) {
+                connection.setCellRegistered(cellModel.id, outputArea.changed);
+                
+                // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
+                outputArea.changed.connect(function (outputAreaModel: any) {
+                  let newOutput = outputAreaModel.get(0);
+  
+                  if (newOutput && newOutput.data[mime]) {
+                    this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
+                  }  
+                }, connection);
+              }
 
               console.log("Send data of MIME", mime, "content");
               dataToSend = outputData[mime];

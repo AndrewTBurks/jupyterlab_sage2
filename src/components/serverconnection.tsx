@@ -126,6 +126,16 @@ export class ServerConnection {
     this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
   }
 
+  // check if the cell id exists within the connection (as a receiver of changes)
+  public isCellRegistered(id : string) {
+    return this._registeredCells[id];
+  }
+
+  // id = code cell ID, signal is object to connect/disconnect to/from
+  public setCellRegistered(id: string, signal: any) {
+    this._registeredCells[id] = signal;
+  }
+
   public onremove(delegate : DisposableDelegate) {
     this._remove = delegate;
   }
@@ -135,15 +145,6 @@ export class ServerConnection {
   }
 
   public sendData(data: any, mime: string, title: string) {
-    // console.log(mime);
-
-    // console.log(this._url);
-
-    // let xhr = new XMLHttpRequest();
-    // xhr.open("POST", this._url + '/upload');
-
-    // xhr.send(data);
-
     let that = this;
 
     if (mime.indexOf("image") >= 0) {
@@ -169,6 +170,8 @@ export class ServerConnection {
 
       i.src = base64; 
     }
+
+    // maybe transition to using existing JupyterSharing messages (this would have Jupyter app already to use for content)
 
     // this._wsio.emit('startJupyterSharing', {
     //   id: this._id,
@@ -276,7 +279,10 @@ export class ServerConnection {
 
     this._wsio.on('jupyterShareTerminated', function (data: any) {
       // message from server on application close of Jupyter Window
-
+      if (that._registeredCells[data.id]) {
+        that._registeredCells[data.id].disconnect();
+        delete that._registeredCells[data.id];
+      }
 
     });
   }
@@ -294,6 +300,7 @@ export class ServerConnection {
   private _connected: boolean = false;
   private _serverInformation: any = {};
 
+  private _registeredCells: any = {};
   private _log : Array<Array<string>> = [];
 
   private _editing: boolean = true;
