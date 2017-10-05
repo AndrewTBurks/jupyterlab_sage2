@@ -299,21 +299,25 @@ export
           let outputArea = codeCell.model.outputs;
           let outputData = outputArea.get(0).data;
 
-          console.log(notebook, codeCell);
-
           let dataToSend = null;
 
           for (let mime of supportedCellOutputs) {
             if (outputData[mime]) {
               // send data to connection if supported type
 
-              outputArea.changed.connect(function() {
-                console.log(arguments);
-              })
+              // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
+              outputArea.changed.connect(function (outputAreaModel: any) {
+                let newOutput = outputAreaModel.get(0);
+
+                if (newOutput && newOutput.data[mime]) {
+                  this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
+                }  
+              }, connection);
+
 
               console.log("Send data of MIME", mime, "content");
               dataToSend = outputData[mime];
-              connection.sendData(dataToSend, mime, `Jupyter Notebook Cell [${notebook.activeCellIndex}]`);
+              connection.sendData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
               break;
             }
           }
@@ -335,12 +339,12 @@ export
         selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell as any;
         let outputs = selectedCell.model.outputs
 
-        if (outputs) {
+        if (outputs && outputs.get(0)) {
           let outputData = outputs.get(0).data;
 
           for (let mime of supportedCellOutputs) {
             if (outputData[mime]) {
-              console.log("Found data in cell for MIME", mime);
+              // console.log("Found data in cell for MIME", mime);
               hasDataToSend = true;
               break;
             }

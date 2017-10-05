@@ -273,6 +273,12 @@ export class ServerConnection {
     this._wsio.on('storedFileList', function (data : any) {
       console.log(data);
     });
+
+    this._wsio.on('jupyterShareTerminated', function (data: any) {
+      // message from server on application close of Jupyter Window
+
+
+    });
   }
 
   private log(event: Array<string>) {
