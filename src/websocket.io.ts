@@ -163,7 +163,7 @@ class WebSocketIO {
    * @param name {String} name of the message (i.e. RPC)
    * @param data {Object} data to be sent with the message
    */
-  public emit(name: any, data: any, attempts: number = 16) {
+  public emit(name: any, data?: any, attempts: number = 16) {
     if (name === null || name === "") {
       console.log("Error: no message name specified");
       return;

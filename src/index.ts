@@ -77,6 +77,24 @@ namespace CommandIDs {
   const serverSend = 'sage2:server-send';
 };
 
+const supportedCellOutputs = [
+  // "application/vnd.vega.v2+json",
+  // "application/vnd.vegalite.v1+json",
+  "application/pdf", // pdfViewer
+  "image/svg+xml", // imageViewer
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "text/html", // webview
+  // "text/markdown",
+  // "text/latex",
+  // "text/javascript",
+  // "application/javascript",
+  "text/plain" // notepad
+  // "application/vnd.jupyter.stdout",
+  // "application/vnd.jupyter.stderr"
+];
+
 const _SAGE2_Connections = Array<ServerConnection>();
 let tracker : InstanceTracker<SAGE2> = null;
 let menu : Menu = null;
@@ -276,34 +294,64 @@ export
           let index = ArrayExt.findFirstIndex(_SAGE2_Connections, (conn) => conn.url === result.button.caption);
           let connection = _SAGE2_Connections[index];
 
-          let outputCell = ((shell.currentWidget as NotebookPanel).notebook.activeCell);
-          console.log(outputCell);
+          let notebook = (shell.currentWidget as NotebookPanel).notebook;
+          let codeCell = (notebook.activeCell) as any;
+          let outputArea = codeCell.model.outputs;
+          let outputData = outputArea.get(0).data;
 
-          console.log("Send", outputCell, "to", connection);
+          console.log(notebook, codeCell);
+
+          let dataToSend = null;
+
+          for (let mime of supportedCellOutputs) {
+            if (outputData[mime]) {
+              // send data to connection if supported type
+
+              outputArea.changed.connect(function() {
+                console.log(arguments);
+              })
+
+              console.log("Send data of MIME", mime, "content");
+              dataToSend = outputData[mime];
+              connection.sendData(dataToSend, mime, `Jupyter Notebook Cell [${notebook.activeCellIndex}]`);
+              break;
+            }
+          }
+
           return;
         } else {
-          console.log("Cancel")
+          console.log("Cancel send operation");
           return;
         }
       });
     },
     isEnabled: () => {
-      console.log(shell.currentWidget);
-
-      let selectedCell = null;
+      let hasDataToSend = false;
       let notebook = (shell.currentWidget instanceof NotebookPanel) ? shell.currentWidget as NotebookPanel : null;
-      console.log(notebook);
-
-
+      
+      
       if (notebook) {
-        selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell;
-        console.log(selectedCell);
+        let selectedCell = null;
+        selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell as any;
+        let outputs = selectedCell.model.outputs
+
+        if (outputs) {
+          let outputData = outputs.get(0).data;
+
+          for (let mime of supportedCellOutputs) {
+            if (outputData[mime]) {
+              console.log("Found data in cell for MIME", mime);
+              hasDataToSend = true;
+              break;
+            }
+          }
+        }
       }
 
-      console.log((_SAGE2_Connections.length > 0), notebook !== null)
+      // console.log((_SAGE2_Connections.length > 0), hasDataToSend);
 
 
-      return (_SAGE2_Connections.length > 0) && notebook !== null;
+      return (_SAGE2_Connections.length > 0) && hasDataToSend;
     }
   });
 }

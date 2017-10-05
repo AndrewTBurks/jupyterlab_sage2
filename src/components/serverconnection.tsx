@@ -58,6 +58,21 @@ export class ServerConnection {
         <div className="jp-SAGE2-socketLog">
           {log}
         </div>
+        <div className="jp-SAGE2-versionInfo">
+          Version: 
+          <span>
+            {this._serverInformation.version.base}
+          </span>
+          <span>
+            {this._serverInformation.version.branch} 
+          </span>
+          <span>
+            {this._serverInformation.version.commit}
+          </span>
+          <span>
+            {this._serverInformation.version.date}
+          </span> 
+        </div>
       </div>
     );
   } 
@@ -119,6 +134,57 @@ export class ServerConnection {
     this._update = vdomUpdate;
   }
 
+  public sendData(data: any, mime: string, title: string) {
+    // console.log(mime);
+
+    // console.log(this._url);
+
+    // let xhr = new XMLHttpRequest();
+    // xhr.open("POST", this._url + '/upload');
+
+    // xhr.send(data);
+
+    let that = this;
+
+    if (mime.indexOf("image") >= 0) {
+      let base64 = `data:${mime};base64,` + data;
+
+      // create image to get correct size
+      var i = new Image();
+      i.onload = function () {
+        let imageToSend = {
+          src: base64,
+          sender: window.location.href,
+          title,
+          url: window.location.href,
+          mime,
+          width: i.width,
+          height: i.height
+        };
+
+        console.log(imageToSend);
+
+        that._wsio.emit("loadImageFromBuffer", imageToSend);
+      };
+
+      i.src = base64; 
+    }
+
+    // this._wsio.emit('startJupyterSharing', {
+    //   id: this._id,
+    //   title: "jupyter",
+    //   color: "green",
+    //   src: "raw", type: mime, encoding: "base64",
+    //   width: 600, height: 600
+    // });
+
+    // this._wsio.emit('updateJupyterSharing', {
+    //   id: this._id,
+    //   src: data
+    //   // cellId: cellId
+    // });
+  }
+
   private startEditing() {
     this._editing = true;
 
@@ -139,8 +205,26 @@ export class ServerConnection {
 
     this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
     this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
+    // reinitialize server information object
+    this._serverInformation = {};
 
     this._wsio.open(function() {
+
+
+      that.setupListeners();
+
+      // // UI Client
+      // var clientDescription = {
+      //   clientType: "sageUI",
+      //   requests: {
+      //     config: true,
+      //     version: true,
+      //     time: false,
+      //     console: false
+      //   }
+      // };
+
+      // Special Jupyter Client
       var clientDescription = {
           clientType: "jupyter",
           requests: {
@@ -148,28 +232,47 @@ export class ServerConnection {
             version: true,
             time: false,
             console: false
-          },
+          }
         };
 
-        
-        that._wsio.on('initialize', function (data : any) {
-          that._id = data.UID;
-          that._connected = true;
-
-          that._update();
-          // that.startConnection();
-        });
-
-        that._wsio.on('close', function(data : any) {
-          that._connected = false;
-
-          that._update();
-        });
-
         that._wsio.emit('addClient', clientDescription);
+        that._wsio.emit('requestStoredFiles');     
     });
     
     this._update();
+  }
+
+  private setupListeners() {
+    let that = this;
+
+    this._wsio.on('initialize', function (data: any) {
+      that._id = data.UID;
+      that._connected = true;
+
+      that._update();
+      // that.startConnection();
+    });
+
+    this._wsio.on('close', function (data: any) {
+      that._connected = false;
+
+      that._update();
+    });
+
+    // setup other listener types
+
+    // Server sends the SAGE2 version
+    this._wsio.on('setupSAGE2Version', function (data : any) {
+      that._serverInformation.version = data;
+      console.log('SAGE2: version', data.base, data.branch, data.commit, data.date);
+
+      // redraw with info of Version
+      that._update();
+    });
+
+    this._wsio.on('storedFileList', function (data : any) {
+      console.log(data);
+    });
   }
 
   private log(event: Array<string>) {
@@ -183,6 +286,7 @@ export class ServerConnection {
   private _id : string = null;
   private _wsio : WebsocketIO = null;
   private _connected: boolean = false;
+  private _serverInformation: any = {};
 
   private _log : Array<Array<string>> = [];
 
