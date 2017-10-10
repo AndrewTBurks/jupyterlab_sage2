@@ -132,8 +132,16 @@ export class ServerConnection {
   }
 
   // id = code cell ID, signal is object to connect/disconnect to/from
-  public setCellRegistered(id: string, signal: any) {
+  public setCellRegistered(id: string, signal: any, mime: string) {
     this._registeredCells[id] = signal;
+
+    this._wsio.emit('startJupyterSharing', {
+      id: `${this._id}~${id}`,
+      title: "jupyter",
+      color: "green",
+      src: "raw", type: mime, encoding: "base64",
+      width: 600, height: 600
+    });
   }
 
   public onremove(delegate : DisposableDelegate) {
@@ -144,12 +152,12 @@ export class ServerConnection {
     this._update = vdomUpdate;
   }
 
-  public sendData(data: any, mime: string, title: string) {
+  public sendData(data: any, mime: string, title: string, cellID: string) {
     let that = this;
 
     if (mime.indexOf("image") >= 0) {
       let base64 = `data:${mime};base64,` + data;
-
+      
       // create image to get correct size
       var i = new Image();
       i.onload = function () {
@@ -162,30 +170,24 @@ export class ServerConnection {
           width: i.width,
           height: i.height
         };
-
+        
         console.log(imageToSend);
+        
+        that._wsio.emit('updateJupyterSharing', {
+          id: `${that._id}~${cellID}`,
+          src: base64,
+          width: i.width,
+          height: i.height
+          // cellId: cellId
+        });
 
-        that._wsio.emit("loadImageFromBuffer", imageToSend);
+        // that._wsio.emit("loadImageFromBuffer", imageToSend);
       };
-
+      
       i.src = base64; 
     }
 
     // maybe transition to using existing JupyterSharing messages (this would have Jupyter app already to use for content)
-
-    // this._wsio.emit('startJupyterSharing', {
-    //   id: this._id,
-    //   title: "jupyter",
-    //   color: "green",
-    //   src: "raw", type: mime, encoding: "base64",
-    //   width: 600, height: 600
-    // });
-
-    // this._wsio.emit('updateJupyterSharing', {
-    //   id: this._id,
-    //   src: data
-    //   // cellId: cellId
-    // });
   }
 
   private startEditing() {
@@ -239,7 +241,7 @@ export class ServerConnection {
         };
 
         that._wsio.emit('addClient', clientDescription);
-        that._wsio.emit('requestStoredFiles');     
+        that._wsio.emit('requestStoredFiles');
     });
     
     this._update();

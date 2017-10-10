@@ -300,7 +300,7 @@ export
           let outputArea = cellModel.outputs;
           let outputData = outputArea.get(0).data;
 
-          console.log(codeCell, cellModel, outputArea);
+          // console.log(codeCell, cellModel, outputArea);
 
           let dataToSend = null;
 
@@ -310,21 +310,24 @@ export
 
               // if the cell is not registered for updates, register it
               if (!connection.isCellRegistered(cellModel.id)) {
-                connection.setCellRegistered(cellModel.id, outputArea.changed);
+                console.log("Register new Cell for updates", cellModel.id);
+
+                connection.setCellRegistered(cellModel.id, outputArea.changed, mime);
                 
                 // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
+                // TODO: maybe move this into serverconnection
                 outputArea.changed.connect(function (outputAreaModel: any) {
                   let newOutput = outputAreaModel.get(0);
   
                   if (newOutput && newOutput.data[mime]) {
-                    this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
+                    this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
                   }  
                 }, connection);
               }
 
               console.log("Send data of MIME", mime, "content");
               dataToSend = outputData[mime];
-              connection.sendData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`);
+              connection.sendData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
               break;
             }
           }
