@@ -152,7 +152,7 @@ export class ServerConnection {
     this._update = vdomUpdate;
   }
 
-  public sendData(data: any, mime: string, title: string, cellID: string) {
+  public sendCellData(data: any, mime: string, title: string, cellID: string) {
     let that = this;
 
     if (mime.indexOf("image") >= 0) {
@@ -177,7 +177,8 @@ export class ServerConnection {
           id: `${that._id}~${cellID}`,
           src: base64,
           width: i.width,
-          height: i.height
+          height: i.height,
+          title,
           // cellId: cellId
         });
 
@@ -280,12 +281,15 @@ export class ServerConnection {
     });
 
     this._wsio.on('jupyterShareTerminated', function (data: any) {
-      // message from server on application close of Jupyter Window
-      if (that._registeredCells[data.id]) {
-        that._registeredCells[data.id].disconnect();
-        delete that._registeredCells[data.id];
-      }
+      let idPieces = data.id.split("~");
+      console.log(data.id, idPieces)
+      console.log(that._id, that._registeredCells);
 
+      // message from server on application close of Jupyter Window
+      if (that._id === idPieces[0] && that._registeredCells[idPieces[1]]) {
+        that._registeredCells[idPieces[1]].disconnect();
+        delete that._registeredCells[idPieces[1]];
+      }
     });
   }
 

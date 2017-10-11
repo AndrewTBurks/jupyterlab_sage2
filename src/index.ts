@@ -74,7 +74,10 @@ namespace CommandIDs {
   const serverDisconnect = 'sage2:server-disconnect';
 
   export
-  const serverSend = 'sage2:server-send';
+  const sendNotebookCell = 'sage2:send-notebook-cell';
+
+  export
+  const sendNotebook = 'sage2:send-notebook';
 };
 
 const supportedCellOutputs = [
@@ -99,7 +102,7 @@ const _SAGE2_Connections = Array<ServerConnection>();
 let tracker : InstanceTracker<SAGE2> = null;
 let menu : Menu = null;
 
-function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILayoutRestorer, launcher: ILauncher | null) : ISAGE2Tracker {
+function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILayoutRestorer, /*docs: IDocumentManager,*/ launcher: ILauncher | null) : ISAGE2Tracker {
 
   const { commands } = app;
   // const category = "SAGE2";
@@ -162,9 +165,9 @@ function createMenu(app: JupyterLab): Menu {
   menu.addItem({ command: CommandIDs.serverConnect });
   menu.addItem({ command: CommandIDs.serverDisconnect });
 
-  menu.addItem({ command: CommandIDs.serverSend });
-  // menu.addItem({ type: 'separator' });
-  // menu.addItem({ type: 'submenu', submenu: connection });
+  menu.addItem({ type: 'separator' });
+  menu.addItem({ command: CommandIDs.sendNotebookCell });
+  menu.addItem({ command: CommandIDs.sendNotebook });
 
   // _SAGE2_Connections.forEach(server => {
   //   let item = connection.addItem({command: CommandIDs.serverSend, args: { url: server.url }});
@@ -275,7 +278,7 @@ export
     // isEnabled: hasWidget
   });
 
-  commands.addCommand(CommandIDs.serverSend, {
+  commands.addCommand(CommandIDs.sendNotebookCell, {
     label: 'Send Cell to SAGE2',
     execute: args => {
       return showDialog({
@@ -315,19 +318,18 @@ export
                 connection.setCellRegistered(cellModel.id, outputArea.changed, mime);
                 
                 // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
-                // TODO: maybe move this into serverconnection
                 outputArea.changed.connect(function (outputAreaModel: any) {
                   let newOutput = outputAreaModel.get(0);
   
                   if (newOutput && newOutput.data[mime]) {
-                    this.sendData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
+                    this.sendCellData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
                   }  
                 }, connection);
               }
 
               console.log("Send data of MIME", mime, "content");
               dataToSend = outputData[mime];
-              connection.sendData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
+              connection.sendCellData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
               break;
             }
           }
@@ -368,6 +370,67 @@ export
       return (_SAGE2_Connections.length > 0) && hasDataToSend;
     }
   });
+
+  commands.addCommand(CommandIDs.sendNotebook, {
+    label: "Send Notebook to SAGE2",
+    execute: args => {
+      return showDialog({
+        title: 'Send a JupyterNotebook to a SAGE2 Server',
+        body: `Choose a server to send to: `,
+        buttons: [
+          ..._SAGE2_Connections.map((connection) => Dialog.createButton({
+            label: connection.name,
+            caption: connection.url,
+            className: "jp-SAGE2-dialogButton",
+          })),
+          Dialog.cancelButton()
+        ]
+      }).then(result => {
+        if (result.button.accept) {
+          let index = ArrayExt.findFirstIndex(_SAGE2_Connections, (conn) => conn.url === result.button.caption);
+          let connection = _SAGE2_Connections[index];
+
+          let notebookPanel = shell.currentWidget as any;
+          // let notebook = notebookPanel.notebook;
+
+          console.log("Send", notebookPanel, notebookPanel.context.path, notebookPanel.context);
+          console.log("To", connection);
+
+          // form code from sage2-electron app
+
+
+          // var formdata = new FormData();
+          // formdata.append("file0", files[i]);
+          // formdata.append("dropX", dropX);
+          // formdata.append("dropY", dropY);
+          // formdata.append("open", true);
+
+          // formdata.append("SAGE2_ptrName", localStorage.SAGE2_ptrName);
+          // formdata.append("SAGE2_ptrColor", localStorage.SAGE2_ptrColor);
+
+          // var xhr = new XMLHttpRequest();
+          // // add the request into the array
+          // this.array_xhr.push(xhr);
+          // // build the URL
+          // var server = 'https://' + configuration.host + ':' + configuration.secure_port;
+          // server += '/upload';
+          // xhr.open("POST", server, true);
+          // xhr.upload.id = "file" + i.toString();
+          // xhr.upload.addEventListener('progress', progressCallback, false);
+          // xhr.addEventListener('load', loadCallback, false);
+          // xhr.send(formdata);
+
+          return;
+        } else {
+          console.log("Cancel send operation");
+          return;
+        }
+      });
+      },
+      isEnabled: () => {
+        return (_SAGE2_Connections.length > 0) && (shell.currentWidget instanceof NotebookPanel);
+      }
+    });
 }
 
 function updateWidget() {
