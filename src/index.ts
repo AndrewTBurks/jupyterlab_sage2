@@ -393,32 +393,22 @@ export
           let notebookPanel = shell.currentWidget as any;
           // let notebook = notebookPanel.notebook;
 
-          console.log("Send", notebookPanel, notebookPanel.context.path, notebookPanel.context);
+          console.log("Send", notebookPanel.dataset, notebookPanel.context.path, notebookPanel.context);
           console.log("To", connection);
 
+          let getFile = new XMLHttpRequest();
+          getFile.open("GET", "/files/" + notebookPanel.context.path, true);
+          getFile.addEventListener('load', function(e) {
+            // console.log(this.response);
+
+            connection.sendNotebook(new File([this.responseText], shell.currentWidget.title.label), shell.currentWidget.title.label);
+
+          }, false);
+          getFile.send();
+          
           // form code from sage2-electron app
 
-
-          // var formdata = new FormData();
-          // formdata.append("file0", files[i]);
-          // formdata.append("dropX", dropX);
-          // formdata.append("dropY", dropY);
-          // formdata.append("open", true);
-
-          // formdata.append("SAGE2_ptrName", localStorage.SAGE2_ptrName);
-          // formdata.append("SAGE2_ptrColor", localStorage.SAGE2_ptrColor);
-
-          // var xhr = new XMLHttpRequest();
-          // // add the request into the array
-          // this.array_xhr.push(xhr);
-          // // build the URL
-          // var server = 'https://' + configuration.host + ':' + configuration.secure_port;
-          // server += '/upload';
-          // xhr.open("POST", server, true);
-          // xhr.upload.id = "file" + i.toString();
-          // xhr.upload.addEventListener('progress', progressCallback, false);
-          // xhr.addEventListener('load', loadCallback, false);
-          // xhr.send(formdata);
+          
 
           return;
         } else {

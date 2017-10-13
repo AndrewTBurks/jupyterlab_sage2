@@ -191,6 +191,35 @@ export class ServerConnection {
     // maybe transition to using existing JupyterSharing messages (this would have Jupyter app already to use for content)
   }
 
+  public sendNotebook(file: File, title: string) {
+    var formdata = new FormData();
+    formdata.append("file0", file);
+    formdata.append("dropX", "0");
+    formdata.append("dropY", "0");
+    formdata.append("open", "true");
+
+    formdata.append("SAGE2_ptrName", localStorage.SAGE2_ptrName);
+    formdata.append("SAGE2_ptrColor", localStorage.SAGE2_ptrColor);
+
+    // console.log(formdata);
+
+    var sendFile = new XMLHttpRequest();
+    // add the request into the array
+    // build the URL
+    var server = 'https://' + this._serverInformation.config.host + ':' + this._serverInformation.config.secure_port;
+    server += '/upload';
+    sendFile.open("POST", server, true);
+    (sendFile.upload as any).id = "file0";
+    // sendFile.upload.addEventListener('progress', function(ev) {
+    //   console.log(ev);
+    // }, false);
+    sendFile.addEventListener('load', function(ev) {
+      console.log(this.response);
+    }, false);
+
+    sendFile.send(formdata);
+  }
+
   private startEditing() {
     this._editing = true;
 
@@ -274,6 +303,11 @@ export class ServerConnection {
 
       // redraw with info of Version
       that._update();
+    });
+
+    this._wsio.on('setupDisplayConfiguration', function (config: any) {
+      that._serverInformation.config = config;
+      console.log(config);
     });
 
     this._wsio.on('storedFileList', function (data : any) {
