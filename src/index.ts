@@ -71,7 +71,13 @@ namespace CommandIDs {
   const serverConnect = 'sage2:server-connect';
 
   export
-  const serverDisconnect = 'sage2:server-disconnect';
+    const serverDisconnect = 'sage2:server-disconnect';
+
+  export
+  const sendNotebookCellFav = 'sage2:send-notebook-cell-fav';
+
+  export
+  const sendNotebookFav = 'sage2:send-notebook-fav';
 
   export
   const sendNotebookCell = 'sage2:send-notebook-cell';
@@ -99,6 +105,7 @@ const supportedCellOutputs = [
 ];
 
 const _SAGE2_Connections = Array<ServerConnection>();
+let fav_SAGE2 : ServerConnection = null;
 let tracker : InstanceTracker<SAGE2> = null;
 let menu : Menu = null;
 
@@ -162,18 +169,16 @@ function createMenu(app: JupyterLab): Menu {
 
   menu.title.label = 'SAGE2';
   connection.title.label = 'Send to';
-  menu.addItem({ command: CommandIDs.serverConnect });
-  menu.addItem({ command: CommandIDs.serverDisconnect });
+  menu.addItem({ command: CommandIDs.openWidget });
+  // menu.addItem({ command: CommandIDs.serverConnect });
+  // menu.addItem({ command: CommandIDs.serverDisconnect });
 
+  menu.addItem({ type: 'separator' });
+  menu.addItem({ command: CommandIDs.sendNotebookCellFav });
+  menu.addItem({ command: CommandIDs.sendNotebookFav });
   menu.addItem({ type: 'separator' });
   menu.addItem({ command: CommandIDs.sendNotebookCell });
   menu.addItem({ command: CommandIDs.sendNotebook });
-
-  // _SAGE2_Connections.forEach(server => {
-  //   let item = connection.addItem({command: CommandIDs.serverSend, args: { url: server.url }});
-  //   console.log(item);
-  //   // item.label = server.name;
-  // });
 
   return menu;
 }
@@ -192,15 +197,61 @@ export
     return tracker.currentWidget !== null;
   }
 
+  function hasSAGE2(): boolean {
+    return (_SAGE2_Connections.length > 0);
+  }
+
+  function hasFavoriteSAGE2(): boolean {
+    return fav_SAGE2 !== null;
+  }
+
+  function hasCellToSend(): boolean {
+    let hasDataToSend = false;
+    let notebook = (shell.currentWidget instanceof NotebookPanel) ? shell.currentWidget as NotebookPanel : null;
+
+
+    if (notebook) {
+      let selectedCell = null;
+      selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell as any;
+      let outputs = selectedCell.model.outputs
+
+      if (outputs && outputs.get(0)) {
+        let outputData = outputs.get(0).data;
+
+        for (let mime of supportedCellOutputs) {
+          if (outputData[mime]) {
+            // console.log("Found data in cell for MIME", mime);
+            hasDataToSend = true;
+            break;
+          }
+        }
+      }
+    }
+
+    return hasDataToSend;
+  }
+
+  function hasNotebookToSend(): boolean {
+    return (shell.currentWidget instanceof NotebookPanel);
+  }
+
   // Add sage2 commands.
   commands.addCommand(CommandIDs.openWidget, {
-    label: 'New SAGE2 Window',
-    caption: 'Start a new SAGE2 Connection',
+    label: 'Open SAGE2',
+    caption: 'Open the SAGE2 Connection Panel',
     execute: args => {
       console.log ("Start SAGE2 Widget");
 
       // let name = args['name'] as string;
       let sage2 = new SAGE2();
+
+      // if (!tracker.currentWidget) {
+      //   let sage2 = new SAGE2();
+
+      // } else {
+      //   tracker.has(SAGE2)
+      // }
+
       // sage2.id = "sage2-" + _SAGE2Instances++;
       sage2.title.closable = true;
       sage2.title.icon = "jp-SAGE2favicon";
@@ -257,29 +308,29 @@ export
         _SAGE2_Connections.splice(ind, 1);
 
         updateWidget();
+
+        // clear favorite if fav server is removed
+        if (newConnection === fav_SAGE2) {
+          fav_SAGE2 = null;
+        }
       });
 
       newConnection.onupdate(updateWidget);
-      newConnection.onremove(delegate)
+      newConnection.onremove(delegate);
+      newConnection.onfavorite(serverFavorited);
+      newConnection.isfavorite(serverIsFavorite);
 
       _SAGE2_Connections.push(newConnection);
 
       if (tracker.currentWidget) {
         tracker.currentWidget.update();
       }
-
-      // // remove old menu
-      // menu.dispose();
-      // // add new meny with new list of servers
-      // menu = createMenu(app);
-      // mainMenu.addMenu(menu, { rank: 20 });
-      
     }
     // isEnabled: hasWidget
   });
 
   commands.addCommand(CommandIDs.sendNotebookCell, {
-    label: 'Send Cell to SAGE2',
+    label: 'Send Cell to ...',
     execute: args => {
       return showDialog({
         title: 'Send Cell to a SAGE2 Server',
@@ -342,37 +393,12 @@ export
       });
     },
     isEnabled: () => {
-      let hasDataToSend = false;
-      let notebook = (shell.currentWidget instanceof NotebookPanel) ? shell.currentWidget as NotebookPanel : null;
-      
-      
-      if (notebook) {
-        let selectedCell = null;
-        selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell as any;
-        let outputs = selectedCell.model.outputs
-
-        if (outputs && outputs.get(0)) {
-          let outputData = outputs.get(0).data;
-
-          for (let mime of supportedCellOutputs) {
-            if (outputData[mime]) {
-              // console.log("Found data in cell for MIME", mime);
-              hasDataToSend = true;
-              break;
-            }
-          }
-        }
-      }
-
-      // console.log((_SAGE2_Connections.length > 0), hasDataToSend);
-
-
-      return (_SAGE2_Connections.length > 0) && hasDataToSend;
+      return hasSAGE2() && hasCellToSend();
     }
   });
 
   commands.addCommand(CommandIDs.sendNotebook, {
-    label: "Send Notebook to SAGE2",
+    label: "Send Notebook to ...",
     execute: args => {
       return showDialog({
         title: 'Send a JupyterNotebook to a SAGE2 Server',
@@ -418,15 +444,102 @@ export
       });
       },
       isEnabled: () => {
-        return (_SAGE2_Connections.length > 0) && (shell.currentWidget instanceof NotebookPanel);
+        return hasSAGE2() && hasNotebookToSend();
       }
     });
+
+  commands.addCommand(CommandIDs.sendNotebookCellFav, {
+    label: 'Send Cell to Favorite',
+    execute: args => {
+      let connection = fav_SAGE2;
+
+      let notebook = (shell.currentWidget as NotebookPanel).notebook;
+      let codeCell = (notebook.activeCell) as any;
+      let cellModel = codeCell.model;
+      let outputArea = cellModel.outputs;
+      let outputData = outputArea.get(0).data;
+
+      // console.log(codeCell, cellModel, outputArea);
+
+      let dataToSend = null;
+
+      for (let mime of supportedCellOutputs) {
+        if (outputData[mime]) {
+          // send data to connection if supported type
+
+          // if the cell is not registered for updates, register it
+          if (!connection.isCellRegistered(cellModel.id)) {
+            console.log("Register new Cell for updates", cellModel.id);
+
+            connection.setCellRegistered(cellModel.id, outputArea.changed, mime);
+
+            // update on cell change -- TODO: MAKE SURE TO DISCONNECT ON APP CLOSE IN SAGE2
+            outputArea.changed.connect(function (outputAreaModel: any) {
+              let newOutput = outputAreaModel.get(0);
+
+              if (newOutput && newOutput.data[mime]) {
+                this.sendCellData(newOutput.data[mime], mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
+              }
+            }, connection);
+          }
+
+          console.log("Send data of MIME", mime, "content");
+          dataToSend = outputData[mime];
+          connection.sendCellData(dataToSend, mime, `${shell.currentWidget.title.label} [${notebook.activeCellIndex}]`, cellModel.id);
+          break;
+        }
+      }
+    },
+    isEnabled: () => {
+      return hasFavoriteSAGE2() && hasCellToSend();
+    }
+  });
+
+  commands.addCommand(CommandIDs.sendNotebookFav, {
+    label: "Send Notebook to Favorite",
+    execute: args => {
+      let connection = fav_SAGE2;
+
+      let notebookPanel = shell.currentWidget as any;
+      // let notebook = notebookPanel.notebook;
+
+      console.log("Send", notebookPanel.dataset, notebookPanel.context.path, notebookPanel.context);
+      console.log("To", connection);
+
+      let getFile = new XMLHttpRequest();
+      getFile.open("GET", "/files/" + notebookPanel.context.path, true);
+      getFile.addEventListener('load', function (e) {
+        // console.log(this.response);
+
+        connection.sendNotebook(new File([this.responseText], shell.currentWidget.title.label), shell.currentWidget.title.label);
+
+      }, false);
+      getFile.send();
+
+      return;
+    },
+    isEnabled: () => {
+      return hasFavoriteSAGE2() && hasNotebookToSend();
+    }
+  });
 }
 
 function updateWidget() {
   if (tracker.currentWidget) {
     tracker.currentWidget.update();
   }
+}
+
+function serverFavorited(set: boolean) {
+  if (set) {
+    fav_SAGE2 = this;
+  } else if (fav_SAGE2 === this) {
+    fav_SAGE2 = null;
+  }
+}
+
+function serverIsFavorite() {
+  return fav_SAGE2 === this;
 }
 
 export default extension;

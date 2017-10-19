@@ -1,4 +1,5 @@
 .jp-SAGE2-serverConnection {
+    position: relative;
     float: left;
     text-align: center;
     color: #00ba7b;
@@ -10,13 +11,26 @@
     background-color: white;
     margin: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-
     a {
-      font-weight: bold;
-      display: block;
-      font-size: 24px;
-      margin: 5px;
-      margin-bottom: 15px;
+        font-weight: bold;
+        display: block;
+        font-size: 24px;
+        margin: 5px;
+        margin-bottom: 15px;
+    }
+    .favServer {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        &.fa-star {
+            color: #d08853;
+        }
+        &.fa-star-o {
+            color: #818181;
+        }
+    }
+    h4 {
+        margin: 15px 50px;
     }
 }
 
@@ -26,20 +40,17 @@
 
 .jp-SAGE2-serverButtons {
     width: 100%;
-
     .jp-SAGE2-serverButtonEdit {
         color: #ffffff;
         background-color: #f0ad4e;
         border-color: #eea236;
     }
-    
     .jp-SAGE2-serverButtonRemove {
         color: #ffffff;
         background-color: #d9534f;
         border-color: #d43f3a;
     }
 }
-
 
 .jp-SAGE2-socketLog {
     background-color: black;
@@ -54,7 +65,6 @@
     border-radius: 5px;
     overflow-y: scroll;
     text-align: left;
-    
     .jp-SAGE2-socketLogItem {
         display: block;
     }
@@ -62,6 +72,12 @@
 
 .jp-SAGE2-versionInfo {
     span {
-        margin: 0px 5px;
+        margin: 2px 5px 0;
+    }
+}
+
+.jp-SAGE2-versionInfo {
+    span {
+        margin: 2px 5px 0;
     }
 }

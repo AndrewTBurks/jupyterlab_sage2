@@ -30,6 +30,14 @@ export class ServerConnection {
       this._remove.dispose();
     }
     let edit = () => this.startEditing();
+    let favorite = () => { 
+      this._favorite(true);
+      this._update();
+    }
+    let unfavorite = () => { 
+      this._favorite(false);
+      this._update();
+    }
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
@@ -43,8 +51,37 @@ export class ServerConnection {
       );
     });
 
+    let serverInfo :vdom.VirtualNode = this._serverInformation.version ? (
+      <div className="jp-SAGE2-versionInfo">
+        Version:
+          <span>
+          {this._serverInformation.version.base}
+        </span>
+        <span>
+          {this._serverInformation.version.branch}
+        </span>
+        <span>
+          {this._serverInformation.version.commit}
+        </span>
+        <span>
+          {this._serverInformation.version.date}
+        </span>
+      </div>
+    ) : (
+      <div className="jp-SAGE2-versionInfo">
+        No Version Info Found
+      </div>
+    );
+
+    let favicon : vdom.VirtualElement = this._isFavorite() ? (
+      <i className="favServer fa fa-star fa-2x" aria-hidden="true" onclick={unfavorite}></i>
+    ) : (
+      <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onclick={favorite}></i>
+    );
+
     return (
       <div className={classNames}>
+        {favicon}
         <h4>{this._name}</h4>
         <a target="about:blank" href={this._url}>{this._url}</a>
         <div className="jp-SAGE2-serverButtons">
@@ -58,21 +95,7 @@ export class ServerConnection {
         <div className="jp-SAGE2-socketLog">
           {log}
         </div>
-        <div className="jp-SAGE2-versionInfo">
-          Version: 
-          <span>
-            {this._serverInformation.version.base}
-          </span>
-          <span>
-            {this._serverInformation.version.branch} 
-          </span>
-          <span>
-            {this._serverInformation.version.commit}
-          </span>
-          <span>
-            {this._serverInformation.version.date}
-          </span> 
-        </div>
+          {serverInfo}
       </div>
     );
   } 
@@ -152,6 +175,14 @@ export class ServerConnection {
     this._update = vdomUpdate;
   }
 
+  public onfavorite(favoriteUpdate: Function) {
+    this._favorite = favoriteUpdate.bind(this);
+  }
+
+  public isfavorite(checkFavorite: Function) {
+    this._isFavorite = checkFavorite.bind(this);
+  }
+
   public sendCellData(data: any, mime: string, title: string, cellID: string) {
     let that = this;
 
@@ -223,10 +254,23 @@ export class ServerConnection {
   private startEditing() {
     this._editing = true;
 
+    // reset websocket
     if (this._wsio) {
       this._wsio.close();
       this._wsio = null;
     }
+
+    // reset registered update cells
+    for (let cell of this._registeredCells) {
+      cell.disconnect();
+    }
+    this._registeredCells = {};
+
+    // clear log
+    this.clearLog();
+
+    // unfavorite
+    this._favorite(false);
 
     this._update();
   }
@@ -333,9 +377,17 @@ export class ServerConnection {
     this._update();
   }
 
+
+  private clearLog() {
+    this._log = [];
+
+    this._update();
+  }
+
   private _name : string = "SAGE2 Server";
   private _url : string = "http://sage2.server.address.com";
   private _id : string = null;
+
   private _wsio : WebsocketIO = null;
   private _connected: boolean = false;
   private _serverInformation: any = {};
@@ -346,6 +398,9 @@ export class ServerConnection {
   private _editing: boolean = true;
   private _remove: DisposableDelegate;
   private _update: Function;
+  private _favorite: Function;
+  private _isFavorite: Function;
+  
 }
 
 export
