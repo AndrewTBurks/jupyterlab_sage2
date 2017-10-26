@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab_sage2",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A JupyterLab extension to integrate JupyterLab and SAGE2 into one scientific workflow.",
   "author": "Andrew Burks",
   "main": "lib/index.js",
