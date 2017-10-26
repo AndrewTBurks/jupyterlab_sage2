@@ -101,8 +101,7 @@ export class ServerConnection {
   } 
 
   private editableServer(): vdom.VirtualElement {
-    // wrap this._remove in lambda
-    // let remove = () => this._remove.dispose();
+    // wrap this.saveEdits in lambda
     let save = () => this.saveEdits();
 
     let that = this;
@@ -121,9 +120,6 @@ export class ServerConnection {
           <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onclick={save}>
             Save
           </button>
-          {/* <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onclick={remove}>
-            Remove
-          </button> */}
         </div>
       </div>
     );
@@ -292,17 +288,6 @@ export class ServerConnection {
 
       that.setupListeners();
 
-      // // UI Client
-      // var clientDescription = {
-      //   clientType: "sageUI",
-      //   requests: {
-      //     config: true,
-      //     version: true,
-      //     time: false,
-      //     console: false
-      //   }
-      // };
-
       // Special Jupyter Client
       var clientDescription = {
           clientType: "jupyter",
@@ -321,6 +306,7 @@ export class ServerConnection {
     this._update();
   }
 
+  // prepare event listeners for information to get sent to client (files, config, etc)
   private setupListeners() {
     let that = this;
 

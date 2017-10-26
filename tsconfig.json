@@ -9,7 +9,6 @@
     "target": "ES5",
     "outDir": "./lib",
     "lib": ["es5", "es2015.promise", "dom", "es2015.collection"],
-    // "types": ["node", "react", "react-dom", "jest"],
     "types": [],
     "jsx": "react",
     "jsxFactory": "h"

@@ -1,10 +1,8 @@
-// import { DisposableDelegate } from '@phosphor/disposable/lib';
 import {
-  // Widget
+  
 } from '@phosphor/widgets';
 
 import {
-  // DisposableDelegate
 } from '@phosphor/disposable';
 
 import {
@@ -20,8 +18,6 @@ import {
 import {
   VDomModel, VDomRenderer
 } from '@jupyterlab/apputils';
-
-// import WebsocketIO from './websocket.io';
 
 let _SAGE2Instances = 0;
 
@@ -74,8 +70,6 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
     return (
       <div className="jp-SAGE2-body">
         <div className="jp-SAGE2-title">
-          {/* <h1>Server Connections</h1> */}
-          {/* <img src="../../style/sage2a-green_final.svg" alt="Server Connections"/> */}
         </div>
         <hr></hr>
         <div className="jp-SAGE2-connections">
@@ -87,44 +81,8 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
       </div>
     );
   }
-
-  // public addServer(options?: ServerConnection.IOptions) {
-  //   if (!options) {
-  //     options = {url: "https://localhost:9000", "name": "Local SAGE2 Server"};
-  //   }
-
-  //   let connection = new ServerConnection(options);
-  //   this._connections.push(connection);
-  //   this.update();
-
-  //   let delegate = new DisposableDelegate(() => {
-  //     let ind = this._connections.indexOf(connection);
-  //     this._connections.splice(ind, 1);
-
-  //     this.update();
-  //   });
-
-  //   connection.onremove(delegate);
-  //   connection.onupdate(this.update.bind(this));
-  // }
-
-  // private startConnection() {
-  //   console.log("Starting connection to server");
-    
-  //   let notif = document.createElement("h1");
-  //   notif.innerText = `Connected to ${this._server}`;
-
-  //   this._sage2window.appendChild(notif);
-
-  //   this._wsio.emit('startJupyterSharing', {
-  //     id: this.id,
-  //     title: "jupyter",
-  //     color: "green",
-  //     src: "raw", type: "image/jpeg", encoding: "binary",
-  //     width: 600, height: 600
-  //   });
-  // }
   
+  // public functions
   public getConnections: Function = null;
   public addServer: Function = null;
 }
@@ -135,9 +93,4 @@ namespace SAGE2 {
   interface IOptions {
     id: string
   };
-
-  // export
-  // const defaultOptions : IOptions = {
-  //   // ip: "127.0.0.1"
-  // };
 }

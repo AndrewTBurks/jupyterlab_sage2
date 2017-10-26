@@ -170,13 +170,14 @@ function createMenu(app: JupyterLab): Menu {
   menu.title.label = 'SAGE2';
   connection.title.label = 'Send to';
   menu.addItem({ command: CommandIDs.openWidget });
-  // menu.addItem({ command: CommandIDs.serverConnect });
-  // menu.addItem({ command: CommandIDs.serverDisconnect });
 
   menu.addItem({ type: 'separator' });
+
   menu.addItem({ command: CommandIDs.sendNotebookCellFav });
   menu.addItem({ command: CommandIDs.sendNotebookFav });
+  
   menu.addItem({ type: 'separator' });
+  
   menu.addItem({ command: CommandIDs.sendNotebookCell });
   menu.addItem({ command: CommandIDs.sendNotebook });
 
@@ -326,7 +327,6 @@ export
         tracker.currentWidget.update();
       }
     }
-    // isEnabled: hasWidget
   });
 
   commands.addCommand(CommandIDs.sendNotebookCell, {
@@ -353,8 +353,6 @@ export
           let cellModel = codeCell.model;
           let outputArea = cellModel.outputs;
           let outputData = outputArea.get(0).data;
-
-          // console.log(codeCell, cellModel, outputArea);
 
           let dataToSend = null;
 
@@ -425,16 +423,10 @@ export
           let getFile = new XMLHttpRequest();
           getFile.open("GET", "/files/" + notebookPanel.context.path, true);
           getFile.addEventListener('load', function(e) {
-            // console.log(this.response);
-
             connection.sendNotebook(new File([this.responseText], shell.currentWidget.title.label), shell.currentWidget.title.label);
 
           }, false);
           getFile.send();
-          
-          // form code from sage2-electron app
-
-          
 
           return;
         } else {
@@ -458,8 +450,6 @@ export
       let cellModel = codeCell.model;
       let outputArea = cellModel.outputs;
       let outputData = outputArea.get(0).data;
-
-      // console.log(codeCell, cellModel, outputArea);
 
       let dataToSend = null;
 
@@ -501,15 +491,13 @@ export
       let connection = fav_SAGE2;
 
       let notebookPanel = shell.currentWidget as any;
-      // let notebook = notebookPanel.notebook;
-
+      
       console.log("Send", notebookPanel.dataset, notebookPanel.context.path, notebookPanel.context);
       console.log("To", connection);
 
       let getFile = new XMLHttpRequest();
       getFile.open("GET", "/files/" + notebookPanel.context.path, true);
       getFile.addEventListener('load', function (e) {
-        // console.log(this.response);
 
         connection.sendNotebook(new File([this.responseText], shell.currentWidget.title.label), shell.currentWidget.title.label);
 
