@@ -34,15 +34,15 @@
     "extension": true
   },
   "dependencies": {
-    "@jupyterlab/application": "latest",
-    "@jupyterlab/apputils": "latest",
-    "@jupyterlab/launcher": "latest",
-    "@jupyterlab/notebook": "latest",
-    "@jupyterlab/running": "latest",
-    "@jupyterlab/services": "latest",
-    "@phosphor/disposable": "latest",
-    "@phosphor/virtualdom": "latest",
-    "@phosphor/widgets": "latest"
+    "@jupyterlab/application": "*",
+    "@jupyterlab/apputils": "*",
+    "@jupyterlab/launcher": "*",
+    "@jupyterlab/notebook": "*",
+    "@jupyterlab/running": "*",
+    "@jupyterlab/services": "*",
+    "@phosphor/disposable": "*",
+    "@phosphor/virtualdom": "*",
+    "@phosphor/widgets": "*"
   },
   "devDependencies": {
     "less": "^2.7.3",
