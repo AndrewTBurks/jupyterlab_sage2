@@ -1,5 +1,5 @@
 import {
-  
+
 } from '@phosphor/widgets';
 
 import {
@@ -54,15 +54,19 @@ class SAGE2Model extends VDomModel {
 
 export
 class SAGE2 extends VDomRenderer<SAGE2Model> {
+  // SAGE2 widget constructor
   constructor(options : Partial<SAGE2.IOptions> = {}) {
     super();
     this.id = "jp-SAGE2-" + _SAGE2Instances++;
     this.title.label = "SAGE2";
   }
 
+  // render connections
   protected render(): vdom.VirtualNode | vdom.VirtualNode[] {
+    // map connections to vdom VirtualNodes
     let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
 
+    // add server click event listener
     let addonclick = () => {
       this.addServer();
     };

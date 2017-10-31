@@ -12,15 +12,18 @@ const h = vdom.h;
 
 export class ServerConnection {
   constructor(options : ServerConnection.IOptions) {
-    // create html element
+    // initialize url and name
+    // make sure the url has http or https prepended -- TODO: check this code
     this._url = options.url.indexOf("http://") || options.url.indexOf("https://") ? options.url : "http://" + options.url;
     this._name = options.name ? options.name : "SAGE2 Server";
   }
 
+  // create vdom.VirtualElement method creates an editable or established server based on _editing state
   createElement() : vdom.VirtualElement {
     return this._editing ? this.editableServer() : this.establishedServer();
   }
 
+  // construct vdom VirtualElement for an established server (no inputs)
   private establishedServer() : vdom.VirtualElement {
     // wrap this._remove in lambda
     let remove = () => {
@@ -41,6 +44,7 @@ export class ServerConnection {
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
+    // socket log element -- TODO: maybe abstract this into another ui-element?
     let log: vdom.VirtualNode[] = this._log.map((item) => {
       return (
         <div className="jp-SAGE2-socketLogItem">
@@ -51,6 +55,7 @@ export class ServerConnection {
       );
     });
 
+    // server version information 
     let serverInfo :vdom.VirtualNode = this._serverInformation.version ? (
       <div className="jp-SAGE2-versionInfo">
         Version:
@@ -73,6 +78,7 @@ export class ServerConnection {
       </div>
     );
 
+    // icon for favorite connection status
     let favicon : vdom.VirtualElement = this._isFavorite() ? (
       <i className="favServer fa fa-star fa-2x" aria-hidden="true" onclick={unfavorite}></i>
     ) : (
@@ -100,6 +106,7 @@ export class ServerConnection {
     );
   } 
 
+  // construct vdom VirtualElement for editable server -- contains input fields for name/address
   private editableServer(): vdom.VirtualElement {
     // wrap this.saveEdits in lambda
     let save = () => this.saveEdits();
@@ -163,6 +170,7 @@ export class ServerConnection {
     });
   }
 
+  // accesors to set functions for remove, update, favoriting (plugin-wide behavior)
   public onremove(delegate : DisposableDelegate) {
     this._remove = delegate;
   }
@@ -179,6 +187,7 @@ export class ServerConnection {
     this._isFavorite = checkFavorite.bind(this);
   }
 
+  // send cell data to SAGE2 through websocket
   public sendCellData(data: any, mime: string, title: string, cellID: string) {
     let that = this;
 
@@ -218,6 +227,7 @@ export class ServerConnection {
     // maybe transition to using existing JupyterSharing messages (this would have Jupyter app already to use for content)
   }
 
+  // send notebook data to SAGE2 through http POST
   public sendNotebook(file: File, title: string) {
     var formdata = new FormData();
     formdata.append("file0", file);
@@ -227,8 +237,6 @@ export class ServerConnection {
 
     formdata.append("SAGE2_ptrName", localStorage.SAGE2_ptrName);
     formdata.append("SAGE2_ptrColor", localStorage.SAGE2_ptrColor);
-
-    // console.log(formdata);
 
     var sendFile = new XMLHttpRequest();
     // add the request into the array
@@ -268,6 +276,7 @@ export class ServerConnection {
     // unfavorite
     this._favorite(false);
 
+    // update widget render
     this._update();
   }
 
@@ -280,12 +289,13 @@ export class ServerConnection {
 
     this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
     this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
+    
     // reinitialize server information object
     this._serverInformation = {};
 
+    // open connection to server
     this._wsio.open(function() {
-
-
+      // initialize listeners for incoming information from server
       that.setupListeners();
 
       // Special Jupyter Client
@@ -299,10 +309,12 @@ export class ServerConnection {
           }
         };
 
+        // add client and request file listing
         that._wsio.emit('addClient', clientDescription);
         that._wsio.emit('requestStoredFiles');
     });
     
+    // update UI
     this._update();
   }
 
@@ -357,36 +369,45 @@ export class ServerConnection {
     });
   }
 
+  // log function to pass into websocket
   private log(event: Array<string>) {
     this._log.unshift(event);
 
+    // update UI on new log item
     this._update();
   }
 
-
+  // remove all log elements
   private clearLog() {
     this._log = [];
 
     this._update();
   }
 
+  // general server info
   private _name : string = "SAGE2 Server";
   private _url : string = "http://sage2.server.address.com";
   private _id : string = null;
-
-  private _wsio : WebsocketIO = null;
-  private _connected: boolean = false;
   private _serverInformation: any = {};
 
+  // connection information
+  private _wsio : WebsocketIO = null;
+  private _connected: boolean = false;
+
+  // updating cell list (auto send new output)
   private _registeredCells: any = {};
+
+  // websocket event log
   private _log : Array<Array<string>> = [];
 
+  // state variable for if the server is being edited
   private _editing: boolean = true;
+  
+  // functions passed in for plugin-wide behavior
   private _remove: DisposableDelegate;
   private _update: Function;
   private _favorite: Function;
   private _isFavorite: Function;
-  
 }
 
 export
