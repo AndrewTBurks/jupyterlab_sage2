@@ -132,6 +132,7 @@ function activateSAGE2Plugin(app: JupyterLab, mainMenu: IMainMenu, restorer: ILa
 
   // The launcher callback.
   let callback = (cwd: string, name: string) => {
+    console.log (cwd);
     console.log(name);
     
     // open the widget -- In command the state is restored
@@ -254,7 +255,7 @@ export
 
   // Add sage2 commands.
   commands.addCommand(CommandIDs.openWidget, {
-    label: 'Open SAGE2',
+    label: 'Open SAGE2 Manager',
     caption: 'Open the SAGE2 Connection Panel',
     execute: args => {
       console.log ("Start SAGE2 Widget");
@@ -285,13 +286,15 @@ export
       }
       
       // add sage2 widget to the tracker
-      tracker.add(sage2);
+      tracker.add(sage2).then(() => {
+        // add tab to main area
+        shell.addToMainArea(sage2);
+  
+        // switch to the tab
+        shell.activateById(sage2.id);
+      });
 
-      // add tab to main area
-      shell.addToMainArea(sage2);
-
-      // switch to the tab
-      shell.activateById(sage2.id);
+      return sage2;
     }
   });
 
@@ -342,6 +345,11 @@ export
       newConnection.onfavorite(serverFavorited);
       newConnection.isfavorite(serverIsFavorite);
 
+      // set first server created to be the favorite by default
+      if (_SAGE2_Connections.length === 0) {
+        fav_SAGE2 = newConnection;
+      }
+      
       _SAGE2_Connections.push(newConnection);
 
       if (tracker.currentWidget) {
