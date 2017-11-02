@@ -121,8 +121,8 @@ export class ServerConnection {
     
     return (
       <div className="jp-SAGE2-serverConnection">
-        <input oninput={nameChange} value={this._name}></input>
-        <input oninput={urlChange} value={this._url}></input>
+        <label>Server Name: <input oninput={nameChange} value={this._name}></input></label>
+        <label>Address: <input oninput={urlChange} value={this._url}></input></label>
         <div className="jp-SAGE2-serverButtons">
           <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onclick={save}>
             Save
