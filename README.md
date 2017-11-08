@@ -6,7 +6,7 @@ A JupyterLab extension to integrate SAGE2 into the JupyterLab scientific workflo
 
 The goal of this extension is to use [SAGE2](http://sage2.sagecommons.org/) with [JupyterLab](https://github.com/jupyterlab) to integrate existing data science workflows into the collaborative software.
 
-For this extension to work with a SAGE2 server, the server must be running version `2.0.327` or newer.
+### *Disclaimer: A SAGE2 server must be running version `2.0.327` or newer to use this JupyterLab functionality.*
 
 This extension to JupyterLab allows a user to simultaneously connect to multiple SAGE2 servers and share JupyterLab content with SAGE2, including:
 * Notebooks
@@ -78,7 +78,7 @@ The `-p 8888:8888` maps the external port to the docker port: `-p external:inter
 
 When starting the docker image, the console will give a JupyterLab url with an access token. To access JupyterLab, navigate your webpage to `http://yourhostname:yourport/?token=yourtoken`.
 
-For more information on the jupyter/datascience-notebook image, visit: https://github.com/jupyter/docker-stacks/tree/master/datascience-notebook
+For more information on the jupyter/datascience-notebook Docker image, visit: https://github.com/jupyter/docker-stacks/tree/master/datascience-notebook
 
 ## Future Plans
 
