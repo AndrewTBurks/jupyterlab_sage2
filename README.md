@@ -6,19 +6,21 @@ A JupyterLab extension to integrate SAGE2 into the JupyterLab scientific workflo
 
 The goal of this extension is to use [SAGE2](http://sage2.sagecommons.org/) with [JupyterLab](https://github.com/jupyterlab) to integrate existing data science workflows into the collaborative software.
 
+![SAGE2 and JupyterLab in Use](/doc/img/2017-11-09_VideoGrab.jpg "SAGE2 and JupyterLab in Use") *Three researchers using JupyterLab and SAGE2 together with the jupyterlab_sage2 extension.*
+
 ### *Disclaimer: A SAGE2 server must be running version `2.0.327` or newer to use this JupyterLab functionality.*
 
 This extension to JupyterLab allows a user to simultaneously connect to multiple SAGE2 servers and share JupyterLab content with SAGE2, including:
 * Notebooks
 * Notebook Cells (Images)
 
-The plugin displays current server connections -- these connections are persistent whether or not the widget is open. The gold star indicates a 'favorite' SAGE2 server, or a server which you will be using more frequently.
-
-![SAGE2 Plugin](doc/img/2017-11-08_UI_Overview.png "SAGE2 Plugin Overview")
-
 Once the SAGE2 Plugin is opened, a server connection can be created by clicking the green '+' button and entering the server Address. A Server Name can be specified in order to more easily refer to a server later.
 
 ![Connecting to a SAGE2 Server](doc/img/2017-11-08_AddServer.png "Connecting to a SAGE2 Server")
+
+The plugin displays current server connections -- these connections are persistent whether or not the widget is open. The gold star indicates a 'favorite' SAGE2 server, or a server which you will be using more frequently.
+
+![SAGE2 Plugin](doc/img/2017-11-08_UI_Overview.png "SAGE2 Plugin Overview")
 
 When a Notebook is open, the Notebook or a selected cell output may be sent to SAGE2 through the main menu. Sending a Cell/Notebook to 'Favorite' sends the content to the Favorited server, while sending content to '...' opens a dialog in which a user may choose one of the SAGE2 connections to send to.
 
