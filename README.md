@@ -2,11 +2,11 @@
 
 A JupyterLab extension to integrate SAGE2 into the JupyterLab scientific workflow.
 
+![SAGE2 and JupyterLab in Use](/doc/img/2017-11-09_VideoGrab.jpg "SAGE2 and JupyterLab in Use") *Three researchers using JupyterLab and SAGE2 together with the jupyterlab_sage2 extension.*
+
 ## Extension
 
 The goal of this extension is to use [SAGE2](http://sage2.sagecommons.org/) with [JupyterLab](https://github.com/jupyterlab) to integrate existing data science workflows into the collaborative software.
-
-![SAGE2 and JupyterLab in Use](/doc/img/2017-11-09_VideoGrab.jpg "SAGE2 and JupyterLab in Use") *Three researchers using JupyterLab and SAGE2 together with the jupyterlab_sage2 extension.*
 
 ### *Disclaimer: A SAGE2 server must be running version `2.0.327` or newer to use this JupyterLab functionality.*
 
