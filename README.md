@@ -73,7 +73,7 @@ docker pull sage2/jupyterlab-datascience-notebook
 
 ### To run:
 ```
-docker run -it --rm -p 8888:8888 sage2/jupyterlab-datascience-notebook start.sh jupyter lab
+docker run -it --rm -p 8888:8888 sage2/jupyterlab-datascience-notebook:latest start.sh jupyter lab
 ```
 
 The `-p 8888:8888` maps the external port to the docker port: `-p external:internal`. If you would like to select a different port to access Jupyterlab use `-p yourport:8888`.
