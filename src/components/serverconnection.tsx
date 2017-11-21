@@ -1,13 +1,17 @@
 import { DisposableDelegate } from '@phosphor/disposable/lib';
-import * as vdom from '@phosphor/virtualdom';
+
+import * as React from 'react';
+
 import WebsocketIO from '../websocket.io';
+
+import { Log } from './log';
 
 /* tslint:disable */
 /**
  * We have configured the TSX transform to look for the h function in the local
  * module.
  */
-const h = vdom.h;
+// const h = vdom.h;
 /* tslint:enable */
 
 export class ServerConnection {
@@ -19,12 +23,12 @@ export class ServerConnection {
   }
 
   // create vdom.VirtualElement method creates an editable or established server based on _editing state
-  createElement() : vdom.VirtualElement {
+  createElement() : React.ReactElement<any> {
     return this._editing ? this.editableServer() : this.establishedServer();
   }
 
   // construct vdom VirtualElement for an established server (no inputs)
-  private establishedServer() : vdom.VirtualElement {
+  private establishedServer(): React.ReactElement<any> {
     // wrap this._remove in lambda
     let remove = () => {
       // close websocket
@@ -45,18 +49,9 @@ export class ServerConnection {
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
     // socket log element -- TODO: maybe abstract this into another ui-element?
-    let log: vdom.VirtualNode[] = this._log.map((item) => {
-      return (
-        <div className="jp-SAGE2-socketLogItem">
-          <p>
-            {item[0]}> {item[1]}
-          </p>
-        </div>
-      );
-    });
 
     // server version information 
-    let serverInfo :vdom.VirtualNode = this._serverInformation.version ? (
+    let serverInfo: React.ReactElement<any> = this._serverInformation.version ? (
       <div className="jp-SAGE2-versionInfo">
         Version:
           <span>
@@ -79,10 +74,10 @@ export class ServerConnection {
     );
 
     // icon for favorite connection status
-    let favicon : vdom.VirtualElement = this._isFavorite() ? (
-      <i className="favServer fa fa-star fa-2x" aria-hidden="true" onclick={unfavorite}></i>
+    let favicon: React.ReactElement<any> = this._isFavorite() ? (
+      <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={unfavorite}></i>
     ) : (
-      <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onclick={favorite}></i>
+      <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
     );
 
     return (
@@ -91,40 +86,42 @@ export class ServerConnection {
         <h4>{this._name}</h4>
         <a target="about:blank" href={this._url}>{this._url}</a>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onclick={edit}>
+          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
             Edit
           </button>
-          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onclick={remove}>
+          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
             Remove
           </button>
         </div>
-        <div className="jp-SAGE2-socketLog">
-          {log}
-        </div>
+          <Log items={this._log}>
+          </Log>
           {serverInfo}
       </div>
     );
   } 
 
   // construct vdom VirtualElement for editable server -- contains input fields for name/address
-  private editableServer(): vdom.VirtualElement {
+  private editableServer(): React.ReactElement<any> {
     // wrap this.saveEdits in lambda
     let save = () => this.saveEdits();
 
     let that = this;
-    let nameChange = function() {
-      that._name = this.value;
+    let nameChange = function (event: React.FormEvent<HTMLInputElement>) {
+      that._name = (event.target as any).value;
+      that._update();
     }
-    let urlChange = function () {
-      that._url = this.value;
+
+    let urlChange = function (event: React.FormEvent<HTMLInputElement>) {
+      that._url = (event.target as any).value;
+      that._update();
     }
     
     return (
       <div className="jp-SAGE2-serverConnection">
-        <label>Server Name: <input oninput={nameChange} value={this._name}></input></label>
-        <label>Address: <input oninput={urlChange} value={this._url}></input></label>
+        <label>Server Name: <input onInput={nameChange} value={this._name}></input></label>
+        <label>Address: <input onInput={urlChange} value={this._url}></input></label>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onclick={save}>
+          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={save}>
             Save
           </button>
         </div>

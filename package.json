@@ -34,20 +34,21 @@
     "extension": true
   },
   "dependencies": {
-    "@jupyterlab/application": "*",
-    "@jupyterlab/apputils": "*",
-    "@jupyterlab/launcher": "*",
-    "@jupyterlab/notebook": "*",
-    "@jupyterlab/running": "*",
-    "@jupyterlab/services": "*",
+    "@jupyterlab/application": "^0.12.0",
+    "@jupyterlab/apputils": "^0.12.4",
+    "@jupyterlab/launcher": "^0.12.0",
+    "@jupyterlab/notebook": "^0.12.0",
+    "@jupyterlab/running": "^0.12.0",
+    "@jupyterlab/services": "^0.51.0",
     "@phosphor/disposable": "*",
-    "@phosphor/virtualdom": "*",
-    "@phosphor/widgets": "*"
+    "@phosphor/widgets": "*",
+    "react": "~16.0.0"
   },
   "devDependencies": {
     "less": "^2.7.3",
     "rimraf": "^2.6.2",
-    "typescript": "~2.4.1"
+    "typescript": "~2.4.1",
+    "@types/react": "~16.0.18"
   },
   "repository": {
     "type": "git",
