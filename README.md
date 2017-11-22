@@ -14,7 +14,7 @@ This extension to JupyterLab allows a user to simultaneously connect to multiple
 * Notebooks
 * Notebook Cells (Images)
 
-Once the SAGE2 Plugin is opened, a server connection can be created by clicking the green '+' button and entering the server Address. A Server Name can be specified in order to more easily refer to a server later.
+From the JupyterLab launcher, open the SAGE2 widget under "Other." Once the SAGE2 Widget is opened, a server connection can be created by clicking the green '+' button and entering the server Address. A Server Name can be specified in order to more easily refer to a server later.
 
 ![Connecting to a SAGE2 Server](doc/img/2017-11-08_AddServer.png "Connecting to a SAGE2 Server")
 
@@ -28,11 +28,11 @@ When a Notebook is open, the Notebook or a selected cell output may be sent to S
 
 Notebooks are sent to SAGE2 and rendered using [nbviewer](http://nbviewer.jupyter.org/). Notebook cells are rendered as images and automatically updated when a cell is re-run.
 
-### How-to
+<!-- ### How-to
 
-From the JupyterLab launcher, open the SAGE2 widget under "Other." Click the Green-Plus-Button to create a new server connection, and enter a server name and address.
+Click the Green-Plus-Button to create a new server connection, and enter a server name and address.
 
-Once connected, use the SAGE2 menu in the upper menu-bar to send the current notebook or selected cell output to a connected SAGE2 server of your choice.
+Once connected, use the SAGE2 menu in the upper menu-bar to send the current notebook or selected cell output to a connected SAGE2 server of your choice. -->
 
 ## Package Installation
 
@@ -73,7 +73,7 @@ docker pull sage2/jupyterlab-datascience-notebook
 
 ### To run:
 ```
-docker run -it --rm -p 8888:8888 sage2/jupyterlab-datascience-notebook start.sh jupyter lab
+docker run -it --rm -p 8888:8888 sage2/jupyterlab-datascience-notebook:latest start.sh jupyter lab
 ```
 
 The `-p 8888:8888` maps the external port to the docker port: `-p external:internal`. If you would like to select a different port to access Jupyterlab use `-p yourport:8888`.

@@ -9,7 +9,9 @@ import {
   
 } from "@jupyterlab/application"
 
-import * as vdom from '@phosphor/virtualdom';
+// import * as vdom from '@phosphor/virtualdom';
+
+import * as React from 'react';
 
 import {
   ServerConnection
@@ -26,7 +28,7 @@ let _SAGE2Instances = 0;
  * We have configured the TSX transform to look for the h function in the local
  * module.
  */
-const h = vdom.h;
+// const h = vdom.h;
 /* tslint:enable */
 
 export
@@ -62,7 +64,7 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   }
 
   // render connections
-  protected render(): vdom.VirtualNode | vdom.VirtualNode[] {
+  protected render(): React.ReactElement<any> | React.ReactElement<any>[] {
     // map connections to vdom VirtualNodes
     let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
 
@@ -79,7 +81,7 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
         <div className="jp-SAGE2-connections">
           {servers}
         </div>
-        <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onclick={addonclick}>
+        <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onClick={addonclick}>
           <i className="fa fa-3x fa-plus-circle"></i>
         </button>
       </div>

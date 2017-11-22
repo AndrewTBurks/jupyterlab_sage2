@@ -15,7 +15,6 @@ interface ILogState {
 export class Log extends React.Component<ILogProps, ILogState> {
   constructor(props: any) {
     super(props);
-
     this.state = {
       items: props.items
     };

@@ -10,8 +10,8 @@
     "outDir": "./lib",
     "lib": ["es5", "es2015.promise", "dom", "es2015.collection"],
     "types": [],
-    "jsx": "react",
-    "jsxFactory": "h"
+    "jsx": "react"
+    // "jsxFactory": "h"
   },
   "include": ["src/*"]
 }
