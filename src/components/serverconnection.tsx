@@ -5,14 +5,7 @@ import * as React from 'react';
 import WebsocketIO from '../websocket.io';
 
 import { Log } from './log';
-
-/* tslint:disable */
-/**
- * We have configured the TSX transform to look for the h function in the local
- * module.
- */
-// const h = vdom.h;
-/* tslint:enable */
+import { ServerInfo } from './server-info';
 
 export class ServerConnection {
   constructor(options : ServerConnection.IOptions) {
@@ -48,30 +41,28 @@ export class ServerConnection {
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
-    // socket log element -- TODO: maybe abstract this into another ui-element?
-
     // server version information 
-    let serverInfo: React.ReactElement<any> = this._serverInformation.version ? (
-      <div className="jp-SAGE2-versionInfo">
-        Version:
-          <span>
-          {this._serverInformation.version.base}
-        </span>
-        <span>
-          {this._serverInformation.version.branch}
-        </span>
-        <span>
-          {this._serverInformation.version.commit}
-        </span>
-        <span>
-          {this._serverInformation.version.date}
-        </span>
-      </div>
-    ) : (
-      <div className="jp-SAGE2-versionInfo">
-        No Version Info Found
-      </div>
-    );
+    // let serverInfo: React.ReactElement<any> = this._serverInformation.version ? (
+    //   <div className="jp-SAGE2-versionInfo">
+    //     Version:
+    //       <span>
+    //       {this._serverInformation.version.base}
+    //     </span>
+    //     <span>
+    //       {this._serverInformation.version.branch}
+    //     </span>
+    //     <span>
+    //       {this._serverInformation.version.commit}
+    //     </span>
+    //     <span>
+    //       {this._serverInformation.version.date}
+    //     </span>
+    //   </div>
+    // ) : (
+    //   <div className="jp-SAGE2-versionInfo">
+    //     No Version Info Found
+    //   </div>
+    // );
 
     // icon for favorite connection status
     let favicon: React.ReactElement<any> = this._isFavorite() ? (
@@ -93,9 +84,8 @@ export class ServerConnection {
             Remove
           </button>
         </div>
-          <Log items={this._log}>
-          </Log>
-          {serverInfo}
+          <Log items={this._log}></Log>
+          <ServerInfo version={this._serverInformation.version}></ServerInfo>
       </div>
     );
   } 
