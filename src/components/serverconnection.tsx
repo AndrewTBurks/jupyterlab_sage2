@@ -41,29 +41,6 @@ export class ServerConnection {
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
-    // server version information 
-    // let serverInfo: React.ReactElement<any> = this._serverInformation.version ? (
-    //   <div className="jp-SAGE2-versionInfo">
-    //     Version:
-    //       <span>
-    //       {this._serverInformation.version.base}
-    //     </span>
-    //     <span>
-    //       {this._serverInformation.version.branch}
-    //     </span>
-    //     <span>
-    //       {this._serverInformation.version.commit}
-    //     </span>
-    //     <span>
-    //       {this._serverInformation.version.date}
-    //     </span>
-    //   </div>
-    // ) : (
-    //   <div className="jp-SAGE2-versionInfo">
-    //     No Version Info Found
-    //   </div>
-    // );
-
     // icon for favorite connection status
     let favicon: React.ReactElement<any> = this._isFavorite() ? (
       <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={unfavorite}></i>
