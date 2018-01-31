@@ -6,8 +6,12 @@ import {
 } from '@jupyterlab/application';
 
 import {
-  Dialog, showDialog, /*ICommandPalette,*/ IMainMenu, InstanceTracker
+  Dialog, showDialog, /*ICommandPalette,*/ InstanceTracker
 } from '@jupyterlab/apputils'
+
+import {
+  IMainMenu
+} from '@jupyterlab/mainmenu';
 
 import {
   ILauncher
