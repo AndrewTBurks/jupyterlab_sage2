@@ -27,6 +27,7 @@ When a Notebook is open, the Notebook or a selected cell output may be sent to S
 ![Sending Content to SAGE2](doc/img/2017-11-08_DropDownMenu.png "Sending Content to SAGE2")
 
 Notebooks are sent to SAGE2 and rendered using [nbviewer](http://nbviewer.jupyter.org/). Notebook cells are rendered as images and automatically updated when a cell is re-run.
+This requires that the SAGE2 server has an externally accessible IP or hostname which nbviewer can access. 
 
 <!-- ### How-to
 
@@ -52,13 +53,13 @@ For a development install (requires `npm` version 4 or later), do the following 
 
 ```bash
 npm install
-jupyter labextension link .
+npm run build
+jupyter labextension install .
 ```
 
 To rebuild the package and the JupyterLab app:
 
 ```bash
-npm run build
 jupyter lab build
 ```
 
