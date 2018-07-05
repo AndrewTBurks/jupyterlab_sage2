@@ -230,8 +230,8 @@ export
       selectedCell = (shell.currentWidget as NotebookPanel).notebook.activeCell as any;
       let outputs = selectedCell.model.outputs
 
-      if (outputs && outputs.get(0)) {
-        let outputData = outputs.get(0).data;
+      if (outputs && outputs.get(1)) {
+        let outputData = outputs.get(1).data;
 
         for (let mime of supportedCellOutputs) {
           if (outputData[mime]) {
@@ -385,7 +385,7 @@ export
           let codeCell = (notebook.activeCell) as any;
           let cellModel = codeCell.model;
           let outputArea = cellModel.outputs;
-          let outputData = outputArea.get(0).data;
+          let outputData = outputArea.get(1).data;
 
           let dataToSend = null;
 
@@ -403,7 +403,7 @@ export
                 
                 // update on cell change
                 outputArea.changed.connect(function (outputAreaModel: any) {
-                  let newOutput = outputAreaModel.get(0);
+                  let newOutput = outputAreaModel.get(1);
   
                   // send changed output to SAGE2
                   if (newOutput && newOutput.data[mime]) {
@@ -492,7 +492,7 @@ export
       let codeCell = (notebook.activeCell) as any;
       let cellModel = codeCell.model;
       let outputArea = cellModel.outputs;
-      let outputData = outputArea.get(0).data;
+      let outputData = outputArea.get(1).data;
 
       let dataToSend = null;
 
@@ -509,7 +509,7 @@ export
 
             // update on cell change
             outputArea.changed.connect(function (outputAreaModel: any) {
-              let newOutput = outputAreaModel.get(0);
+              let newOutput = outputAreaModel.get(1);
 
               // send updated data to SAGE2
               if (newOutput && newOutput.data[mime]) {
