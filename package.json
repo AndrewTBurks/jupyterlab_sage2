@@ -1,58 +1,45 @@
 {
   "name": "jupyterlab_sage2",
-  "version": "0.3.0",
-  "description": "A JupyterLab extension to integrate JupyterLab and SAGE2 into one scientific workflow.",
-  "author": "Andrew Burks",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "files": [
-    "lib/*/*d.ts",
-    "lib/*/*.js",
-    "lib/*.d.ts",
-    "lib/*.js",
-    "schema/*.json",
-    "style/out/*.*",
-    "style/img/*.*"
-  ],
-  "directories": {
-    "lib": "lib/"
-  },
+  "version": "0.1.0",
+  "description": "A JupyterLab extension integrating the Jupyter data science workflow with the SAGE2 collaborative system.",
   "keywords": [
     "jupyter",
     "jupyterlab",
+    "jupyterlab-extension",
     "SAGE2"
   ],
-  "scripts": {
-    "build": "npm run buildts & npm run buildless",
-    "buildts": "tsc",
-    "buildless": "lessc style/src/index.less style/out/index.css",
-    "clean": "rimraf lib",
-    "watch": "tsc -w",
-    "prepublish": "npm run build"
+  "homepage": "https://github.com/AndrewTBurks/jupyterlab_sage2",
+  "bugs": {
+    "url": "https://github.com/AndrewTBurks/jupyterlab_sage2/issues"
   },
-  "jupyterlab": {
-    "extension": true
-  },
-  "dependencies": {
-    "@jupyterlab/application": "^0.12.0",
-    "@jupyterlab/apputils": "^0.12.4",
-    "@jupyterlab/launcher": "^0.12.0",
-    "@jupyterlab/notebook": "^0.12.0",
-    "@jupyterlab/running": "^0.12.0",
-    "@jupyterlab/services": "^0.51.0",
-    "@phosphor/disposable": "*",
-    "@phosphor/widgets": "*",
-    "react": "~16.0.0"
-  },
-  "devDependencies": {
-    "less": "^2.7.3",
-    "rimraf": "^2.6.2",
-    "typescript": "~2.4.1",
-    "@types/react": "~16.0.18"
-  },
+  "license": "BSD-3-Clause",
+  "author": "Andrew Burks",
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/AndrewTBurks/jupyterlab_sage2.git"
   },
-  "license": "MIT"
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "watch": "tsc -w",
+    "prepare": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@jupyterlab/application": "^0.18.0",
+    "@jupyterlab/launcher": "^0.18.4",
+    "@jupyterlab/mainmenu": "^0.7.4"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "typescript": "~2.9.2"
+  },
+  "jupyterlab": {
+    "extension": true
+  }
 }

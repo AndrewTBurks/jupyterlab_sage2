@@ -42,22 +42,28 @@ export class ServerConnection {
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
     // icon for favorite connection status
-    let favicon: React.ReactElement<any> = this._isFavorite() ? (
-      <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={unfavorite}></i>
-    ) : (
-      <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
-    );
+    // let favicon: React.ReactElement<any> = this._isFavorite() ? (
+    //   <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={this._isFavorite ? unfavorite : favorite}></i>
+    // ) : (
+    //   <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
+    // );
+
+    let favicon : React.ReactElement<any> = <i 
+      className={`favServer fa fa-star fa-2x ${this._isFavorite() ? 'favorite' : ''}`}
+      aria-hidden="true"
+      onClick={this._isFavorite() ? unfavorite : favorite}
+    />;
 
     return (
       <div className={classNames}>
         {favicon}
-        <h4>{this._name}</h4>
+        <h4 className={this._connected ? "" : "SAGE2-error-font"}>{this._name}</h4>
         <a target="about:blank" href={this._url}>{this._url}</a>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
+          <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={edit}>
             Edit
           </button>
-          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
+          <button className="jp-SAGE2-buttonOther jp-SAGE2-button" onClick={remove}>
             Remove
           </button>
         </div>
@@ -83,17 +89,30 @@ export class ServerConnection {
       that._update();
     }
     
-    return (
-      <div className="jp-SAGE2-serverConnection">
-        <label>Server Name: <input onInput={nameChange} value={this._name}></input></label>
-        <label>Address: <input onInput={urlChange} value={this._url}></input></label>
+    return <div className="jp-SAGE2-serverConnection">
+        <span style={{color: "#666", marginBottom: "3px", display: "inline-block"}}>
+          Connection Information
+        </span>
+        <div className="jp-SAGE2-inputField">
+          <label>
+            <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
+              SAGE<span className="SAGE2-gray-font" >2</span>
+            </span> Server Name <input onInput={nameChange} value={this._name} />
+          </label>
+        </div>
+        <div className="jp-SAGE2-inputField">
+          <label>
+            <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
+              SAGE<span className="SAGE2-gray-font" >2</span>
+            </span> URL <input className="SAGE2-url" onInput={urlChange} value={this._url} />
+          </label>
+        </div>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={save}>
+          <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={save}>
             Save
           </button>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // get the name of a connection
@@ -229,8 +248,9 @@ export class ServerConnection {
     }
 
     // reset registered update cells
-    for (let cell of this._registeredCells) {
-      cell.disconnect();
+
+    for (let cellId of Object.keys(this._registeredCells)) {
+      this._registeredCells[cellId].disconnect();
     }
     this._registeredCells = {};
 

@@ -38,7 +38,7 @@ export class ServerInfo extends React.Component<IServerInfoProps, IServerInfoSta
         </span>
       </div>
     ) : (
-        <div className="jp-SAGE2-versionInfo">
+        <div className="jp-SAGE2-versionInfo SAGE2-error-font">
           No Version Info Found
       </div>
       );
