@@ -22,9 +22,9 @@ export class LogEntry extends React.Component<ILogEntryProps, ILogEntryState> {
   render() {
     return (
       <div className="jp-SAGE2-socketLogItem">
-        <p>
+        {/* <div> */}
           {this.state.item[0]}> {this.state.item[1]}
-        </p>
+        {/* </div> */}
       </div>
     );
   }

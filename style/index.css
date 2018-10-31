@@ -45,7 +45,7 @@
 .jp-SAGE2-body button {
   display: inline-block;
   padding: 6px 12px;
-  margin: 0 10px;
+  /* margin: 0 10px; */
   margin-bottom: 0;
   font-size: 14px;
   font-weight: 400;
@@ -60,8 +60,28 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: 1.25px solid rgba(100, 100, 100, 0.5);
+  border-radius: 0;
+
+  min-width: 75px;
+
+  border-style: initial;
+  
+  /* border-width: 1.25px 0; */
+}
+
+.jp-SAGE2-body button:first-of-type {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  /* border-left-width: 1.25px; */
+}
+
+.jp-SAGE2-body button:last-of-type {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  /* border-right-width: 1.25px; */
 }
 
 .jp-SAGE2-body input {
@@ -103,18 +123,20 @@
   box-shadow: 0 0 10px 1px #ccc;
 }
 
-.jp-SAGE2-addServerButton {
+.jp-SAGE2-body button.jp-SAGE2-addServerButton {
   position: absolute;
+
+  border-radius: 150px;
+
   right: 20px;
   bottom: 20px;
   /* top: 50%; */
   /* transform: translateY(-50%); */
   /* display: inline-block; */
-  font-size: 48px;
+  /* font-size: 48px; */
   font-weight: bold;
   margin: auto;
   color: #ffffff;
-
   box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.25);
 }
 
@@ -127,7 +149,7 @@
   flex: 1;
   justify-content: center;
   align-items: flex-start;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverConnection {
@@ -135,7 +157,7 @@
   /* float: left; */
   text-align: center;
   color: var(--sage2-green);
-  padding: 15px;
+  padding-bottom: 15px;
   max-width: 85%;
   border-style: outset;
   border-width: 3px;
@@ -147,18 +169,15 @@
   box-shadow: 0 0 7.5px rgba(0, 0, 0, 0.25);
 }
 
-.jp-SAGE2-connections .jp-SAGE2-serverConnection a {
-  font-weight: bold;
-  display: block;
-  font-size: 24px;
-  margin: 5px;
-  margin-bottom: 15px;
-}
-
 .jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer {
   position: absolute;
   left: 20px;
-  top: 20px;
+
+  /* center vertically */
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-size: 1.5em;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer.fa-star {
@@ -174,13 +193,69 @@
   color: var(--gold-light);
 }
 
-.jp-SAGE2-connections .jp-SAGE2-serverConnection h4 {
+.jp-SAGE2-connections .jp-SAGE2-serverInfo {
+  margin: 0 0 10px;
+  text-align: center;
+  width: 100%;
+
+  /* padding: 5px; */
+
+  /* border: 1px solid black; */
+  display: inline-block;
+
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverInfo .jp-SAGE2-serverName {
+  position: relative;
+
   font-size: 20px;
-  margin: 10px 50px;
+  /* margin: 5px 50px; */
+  padding: 8px 12px;
+
+  /* border-radius: 5px 5px 0 0; */
+  border: 1.25px solid transparent;
+  border-bottom-color: #00000044;
+
+  background-color: #f0f0f0;
+  /* box-shadow: inset 0 0 5px 1.5px #e0e0e0;   */
+
+  font-weight: bold;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverInfo a {
+  /* font-weight: bold; */
+  display: block;
+  font-size: 16px;
+  padding: 7px;
+  /* margin-bottom: 15px; */
+
+  /* background-color: lightblue; */
+
+  /* border: 1.25px solid #00000022; */
+}
+
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo {
+  padding: 4px 2px;
+  /* font-weight: bold; */
+  font-size: 14px;
+
+  border-radius: 0 0 5px 5px;
+  color: var(--sage2-green);
+  font-weight: bold;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo span.value {
+  color: var(--sage2-gray);
+  font-weight: normal;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo span:not(.value):not(:last-of-type) {
+  margin: 0 10px 0 0;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField {
-  margin: 5px;
+  margin: 10px 15px;
   padding-top: 5px;
   /* border: 1px solid rgb(204, 204, 204); */
   background: #f0f0f0;
@@ -195,6 +270,7 @@
 
 .jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField input {
   margin-top: 5px;
+
   border-radius: 0 0 4px 4px;
 }
 
@@ -202,7 +278,10 @@
   color: blue;
 }
 
-.jp-SAGE2-connections .jp-SAGE2-serverNotConnected {
+.jp-SAGE2-connections .jp-SAGE2-serverNotConnected .jp-SAGE2-serverName {
+  font-style: italic;
+  font-weight: lighter;
+  color: var(--error-red);
   /* using this color messes up contrast */
   /* background-color: #ffd6d6; */
 }
@@ -214,28 +293,32 @@
 .jp-SAGE2-buttonAccept {
   color: #ffffff;
   background-color: var(--sage2-green);
-  background-image: linear-gradient(var(--sage2-green), var(--sage2-green-l10), var(--sage2-green));
-  border: 1.25px solid var(--sage2-green-l10);
+  background-image: linear-gradient(var(--sage2-green) 10%, var(--sage2-green-l10) 40%, var(--sage2-green-l10) 60%, var(--sage2-green) 90%);
 }
 
 .jp-SAGE2-buttonAccept:hover {
-  /* background-color: var(--sage2-green); */
-  background-image: linear-gradient(var(--sage2-green), var(--sage2-green-d5), var(--sage2-green));
-  border-color: var(--sage2-green);
+  background-image: linear-gradient(var(--sage2-green) 10%, var(--sage2-green-d5) 40%, var(--sage2-green-d5) 60%, var(--sage2-green) 90%);
 }
 
 .jp-SAGE2-buttonOther {
   color: #ffffff;
   background-color: var(--sage2-gray);
-  background-image: linear-gradient(var(--sage2-gray), var(--sage2-gray-l10), var(--sage2-gray));
-  border: 1.25px solid var(--sage2-gray-l10);
+  background-image: linear-gradient(var(--sage2-gray) 10%, var(--sage2-gray-l10) 40%, var(--sage2-gray-l10) 60%, var(--sage2-gray) 90%);
 }
 
 .jp-SAGE2-buttonOther:hover {
-  /* background-color: var(--sage2-gray); */
-  background-image: linear-gradient(var(--sage2-gray), var(--sage2-gray-d5), var(--sage2-gray));
-  border-color: var(--sage2-gray);
-  /* background-image: unset; */
+  background-image: linear-gradient(var(--sage2-gray) 10%, var(--sage2-gray-d5) 40%, var(--sage2-gray-d5) 60%, var(--sage2-gray) 90%);
+}
+
+
+.jp-SAGE2-buttonLink {
+  color: #ffffff;
+  background-color: var(--link);
+  background-image: linear-gradient(var(--link) 10%, var(--link-l10) 40%, var(--link-l10) 60%, var(--link) 90%);
+}
+
+.jp-SAGE2-buttonLink:hover {
+  background-image: linear-gradient(var(--link) 10%, var(--link-d5) 40%, var(--link-d5) 60%, var(--link) 90%);
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonEdit {
@@ -253,39 +336,60 @@
 .jp-SAGE2-connections .jp-SAGE2-socketLog {
   background-color: black;
   color: #e0e0e0;
-  font-family: monospace;
   width: 350px;
   max-width: 85%;
-  height: 100px;
+  height: 125px;
+
   margin: auto;
   margin-top: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-y: scroll;
+  
+  border-radius: 5px 5px 0 0;
+  
+  overflow-y: auto;
   text-align: left;
   transition: height 0.25s;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: stretch;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLogTitle {
+  flex: 0;
+  background: #333;
+  border: 2px solid #666666aa;
+  padding: 3px 6px;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLogList {
+  flex: 1;
+  padding: 10px;
+
+  border: 2px solid #444;
+  border-top-color: #222;
+
+  /* background: pink; */
+  font-family: monospace;
+  
+  overflow-y: auto;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-socketLog .jp-SAGE2-socketLogItem {
   display: block;
+
+  margin: 5px 0;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-socketLog:hover {
   height: 200px;
+
+  cursor: auto;
 }
 
-.jp-SAGE2-connections .jp-SAGE2-versionInfo span {
-  margin: 2px 5px 0;
-}
+.jp-SAGE2-connections .jp-SAGE2-socketLog:hover .jp-SAGE2-socketLogTitle {
+  background: #444;
 
-.jp-SAGE2-connections .jp-SAGE2-versionInfo {
-  margin: 8px 2px 0;
-  font-weight: bold;
-}
-
-.jp-SAGE2-connections .jp-SAGE2-versionInfo span {
-  margin: 0 5px;
-  color: #818181;
 }
 
 .jp-SAGE2-dialogButton {
@@ -310,7 +414,6 @@
   --gold: #f0ad4e;
   --gold-light: #F2CD98;
   --gold-unsat: #8A8264;
-
   --sage2-gray: #434244;
   --sage2-gray-l10: #5D5C5E;
   --sage2-gray-l20: #767577;
@@ -321,4 +424,10 @@
   --sage2-green-l20: #41EBAE;
   --sage2-green-d5: #01AB6E;
   --sage2-green-d10: #009F62;
+
+  --link: #05A0C5;
+  --link-l10: #1FBADF;
+  --link-l20: #38D3F8;
+  --link-d5: #0093B8;
+  --link-d10: #0087AC;
 }

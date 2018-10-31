@@ -25,10 +25,13 @@ export class Log extends React.Component<ILogProps, ILogState> {
         <LogEntry item={item}></LogEntry>
       ));
 
-    return (
+    return (<>
       <div className="jp-SAGE2-socketLog">
-        {entries}
+        <div className="jp-SAGE2-socketLogTitle">Communication Log</div>
+        <div className="jp-SAGE2-socketLogList">
+          {entries}
+        </div>
       </div>
-    );
+      </>);
   }
 }

@@ -49,16 +49,26 @@ export class ServerConnection {
     // );
 
     let favicon : React.ReactElement<any> = <i 
-      className={`favServer fa fa-star fa-2x ${this._isFavorite() ? 'favorite' : ''}`}
+      className={`favServer fa fa-star ${this._isFavorite() ? 'favorite' : ''}`}
       aria-hidden="true"
       onClick={this._isFavorite() ? unfavorite : favorite}
     />;
 
     return (
       <div className={classNames}>
-        {favicon}
-        <h4 className={this._connected ? "" : "SAGE2-error-font"}>{this._name}</h4>
-        <a target="about:blank" href={this._url}>{this._url}</a>
+        <div className="jp-SAGE2-serverInfo">
+          <div className="jp-SAGE2-serverName">
+            {favicon}
+            {this._name}
+          </div>
+          <a
+            // className="jp-SAGE2-buttonLink"
+            target="about:blank"
+            href={this._url}>
+              {this._url}
+          </a>
+          <ServerInfo version={this._serverInformation.version}></ServerInfo>
+        </div>
         <div className="jp-SAGE2-serverButtons">
           <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={edit}>
             Edit
@@ -67,8 +77,7 @@ export class ServerConnection {
             Remove
           </button>
         </div>
-          <Log items={this._log}></Log>
-          <ServerInfo version={this._serverInformation.version}></ServerInfo>
+        <Log items={this._log}></Log>
       </div>
     );
   } 
@@ -90,7 +99,7 @@ export class ServerConnection {
     }
     
     return <div className="jp-SAGE2-serverConnection">
-        <span style={{color: "#666", marginBottom: "3px", display: "inline-block"}}>
+        <span style={{color: "#666", margin: "15px 0 3px", display: "inline-block"}}>
           Connection Information
         </span>
         <div className="jp-SAGE2-inputField">
