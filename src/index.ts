@@ -3,17 +3,6 @@ import {
 } from '@jupyterlab/application';
 
 import {
-<<<<<<< HEAD
-  Dialog, showDialog, /*ICommandPalette,*/ InstanceTracker
-} from '@jupyterlab/apputils'
-
-import {
-  IMainMenu
-} from '@jupyterlab/mainmenu';
-
-import {
-=======
->>>>>>> dev
   ILauncher
 } from '@jupyterlab/launcher';
 
