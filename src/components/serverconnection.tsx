@@ -150,16 +150,8 @@ export class ServerConnection {
   }
 
   // id = code cell ID, signal is object to connect/disconnect to/from
-  public setCellRegistered(id: string, signal: any, mime: string) {
+  public setCellRegistered(id: string, signal: any, mime: string, cellData: string) {
     this._registeredCells[id] = signal;
-
-    this._wsio.emit('startJupyterSharing', {
-      id: `${this._id}~${id}`,
-      title: "jupyter",
-      color: "green",
-      src: "raw", type: mime, encoding: "base64",
-      width: 600, height: 600
-    });
   }
 
   // accesors to set functions for remove, update, favoriting (plugin-wide behavior)
@@ -204,11 +196,21 @@ export class ServerConnection {
         that._wsio.emit('updateJupyterSharing', {
           id: `${that._id}~${cellID}`,
           src: base64,
+          mime,
           width: i.width,
           height: i.height,
           title,
           // cellId: cellId
         });
+
+        return {
+          id: `${that._id}~${cellID}`,
+          src: base64,
+          width: i.width,
+          height: i.height,
+          title,
+          // cellId: cellId
+        };
 
         // that._wsio.emit("loadImageFromBuffer", imageToSend);
       };
@@ -385,7 +387,7 @@ export class ServerConnection {
 
   // connection information
   private _wsio : WebsocketIO = null;
-  private _connected: boolean = false;
+  public _connected: boolean = false;
 
   // updating cell list (auto send new output)
   private _registeredCells: any = {};
