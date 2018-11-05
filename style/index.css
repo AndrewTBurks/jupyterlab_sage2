@@ -1,0 +1,433 @@
+.jp-SAGE2Icon {
+  background-image: url(./img/sage2a-green_final.svg);
+  background-color: white;
+  background-position: center;
+  border: 1.25px solid rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+
+.jp-SAGE2favicon {
+  background-image: url(./img/icon.png);
+  background-color: white;
+  background-position: center !important;
+  width: 24px !important;
+  border-radius: 2px;
+}
+
+.jp-SAGE2-uiWrapper {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.jp-SAGE2-serverConnectForm {
+  font-size: 20px;
+  color: black;
+}
+
+/* ========================= */
+
+/* Using some styling for buttons and inputs from Bootstrap */
+
+.jp-SAGE2-body {
+  /* padding: 20px; */
+  width: 100%;
+  height: 100%;
+  background: #e0e0e0;
+  font-family: Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-SAGE2-body button {
+  display: inline-block;
+  padding: 6px 12px;
+  /* margin: 0 10px; */
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border: 1.25px solid rgba(100, 100, 100, 0.5);
+  border-radius: 0;
+
+  min-width: 75px;
+
+  border-style: initial;
+  
+  /* border-width: 1.25px 0; */
+}
+
+.jp-SAGE2-body button:first-of-type {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  /* border-left-width: 1.25px; */
+}
+
+.jp-SAGE2-body button:last-of-type {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  /* border-right-width: 1.25px; */
+}
+
+.jp-SAGE2-body input {
+  display: block;
+  /* width: 100%; */
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555555;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  /* margin: 10px 0; */
+}
+
+.jp-SAGE2-title {
+  position: relative;
+  font-style: italic;
+  text-align: center;
+  font-size: 32px;
+  height: 150px;
+  width: 100%;
+  background-color: white;
+  background-image: url(./img/sage2a-green_final.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 150%;
+  /* border-bottom: 4px solid #999; */
+  box-sizing: border-box;
+  border-style: outset;
+  border-width: 3px;
+  box-shadow: 0 0 10px 1px #ccc;
+}
+
+.jp-SAGE2-body button.jp-SAGE2-addServerButton {
+  position: absolute;
+
+  border-radius: 150px;
+
+  right: 20px;
+  bottom: 20px;
+  /* top: 50%; */
+  /* transform: translateY(-50%); */
+  /* display: inline-block; */
+  /* font-size: 48px; */
+  font-weight: bold;
+  margin: auto;
+  color: #ffffff;
+  box-shadow: 0 0 7px 2px rgba(0, 0, 0, 0.25);
+}
+
+.jp-SAGE2-connections {
+  padding: 15px;
+  /* text-align: center; */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection {
+  position: relative;
+  /* float: left; */
+  text-align: center;
+  color: var(--sage2-green);
+  padding-bottom: 15px;
+  max-width: 85%;
+  border-style: outset;
+  border-width: 3px;
+  /* border-color: rgba(0, 0, 0, 0.25); */
+  /* border: 3px solid rgba(0, 0, 0, 0.25); */
+  /* border-radius: 10px; */
+  background-color: white;
+  margin: 10px;
+  box-shadow: 0 0 7.5px rgba(0, 0, 0, 0.25);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer {
+  position: absolute;
+  left: 20px;
+
+  /* center vertically */
+  top: 50%;
+  transform: translateY(-50%);
+
+  font-size: 1.5em;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer.fa-star {
+  color: var(--gold-unsat);
+  cursor: pointer;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer.fa-star.favorite {
+  color: var(--gold);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .favServer.fa-star:hover {
+  color: var(--gold-light);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverInfo {
+  margin: 0 0 10px;
+  text-align: center;
+  width: 100%;
+
+  /* padding: 5px; */
+
+  /* border: 1px solid black; */
+  display: inline-block;
+
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverInfo .jp-SAGE2-serverName {
+  position: relative;
+
+  font-size: 20px;
+  /* margin: 5px 50px; */
+  padding: 8px 12px;
+
+  /* border-radius: 5px 5px 0 0; */
+  border: 1.25px solid transparent;
+  border-bottom-color: #00000044;
+
+  background-color: #f0f0f0;
+  /* box-shadow: inset 0 0 5px 1.5px #e0e0e0;   */
+
+  font-weight: bold;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverInfo a {
+  /* font-weight: bold; */
+  display: block;
+  font-size: 16px;
+  padding: 7px;
+  /* margin-bottom: 15px; */
+
+  /* background-color: lightblue; */
+
+  /* border: 1.25px solid #00000022; */
+}
+
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo {
+  padding: 4px 2px;
+  /* font-weight: bold; */
+  font-size: 14px;
+
+  border-radius: 0 0 5px 5px;
+  color: var(--sage2-green);
+  font-weight: bold;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo span.value {
+  color: var(--sage2-gray);
+  font-weight: normal;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-versionInfo span:not(.value):not(:last-of-type) {
+  margin: 0 10px 0 0;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField {
+  margin: 10px 15px;
+  padding-top: 5px;
+  /* border: 1px solid rgb(204, 204, 204); */
+  background: #f0f0f0;
+  box-shadow: inset 0 0 5px 1.5px #e0e0e0;
+  border-radius: 4px;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField label {
+  color: black;
+  font-size: 14px;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField input {
+  margin-top: 5px;
+
+  border-radius: 0 0 4px 4px;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverConnection .jp-SAGE2-inputField .SAGE2-url {
+  color: blue;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverNotConnected .jp-SAGE2-serverName {
+  font-style: italic;
+  font-weight: lighter;
+  color: var(--error-red);
+  /* using this color messes up contrast */
+  background-color: #ffd6d6;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons {
+  width: 100%;
+}
+
+.jp-SAGE2-buttonAccept {
+  color: #ffffff;
+  background-color: var(--sage2-green);
+  background-image: linear-gradient(var(--sage2-green) 10%, var(--sage2-green-l10) 40%, var(--sage2-green-l10) 60%, var(--sage2-green) 90%);
+}
+
+.jp-SAGE2-buttonAccept:hover {
+  background-image: linear-gradient(var(--sage2-green) 10%, var(--sage2-green-d5) 40%, var(--sage2-green-d5) 60%, var(--sage2-green) 90%);
+}
+
+.jp-SAGE2-buttonOther {
+  color: #ffffff;
+  background-color: var(--sage2-gray);
+  background-image: linear-gradient(var(--sage2-gray) 10%, var(--sage2-gray-l10) 40%, var(--sage2-gray-l10) 60%, var(--sage2-gray) 90%);
+}
+
+.jp-SAGE2-buttonOther:hover {
+  background-image: linear-gradient(var(--sage2-gray) 10%, var(--sage2-gray-d5) 40%, var(--sage2-gray-d5) 60%, var(--sage2-gray) 90%);
+}
+
+
+.jp-SAGE2-buttonLink {
+  color: #ffffff;
+  background-color: var(--link);
+  background-image: linear-gradient(var(--link) 10%, var(--link-l10) 40%, var(--link-l10) 60%, var(--link) 90%);
+}
+
+.jp-SAGE2-buttonLink:hover {
+  background-image: linear-gradient(var(--link) 10%, var(--link-d5) 40%, var(--link-d5) 60%, var(--link) 90%);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonEdit {
+  color: #ffffff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonRemove {
+  color: #ffffff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLog {
+  background-color: black;
+  color: #e0e0e0;
+  width: 350px;
+  max-width: 85%;
+  height: 125px;
+
+  margin: auto;
+  margin-top: 15px;
+  
+  border-radius: 5px 5px 0 0;
+  
+  overflow-y: auto;
+  text-align: left;
+  transition: height 0.25s;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: stretch;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLogTitle {
+  flex: 0;
+  background: #333;
+  border: 2px solid #666666aa;
+  padding: 3px 6px;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLogList {
+  flex: 1;
+  padding: 10px;
+
+  border: 2px solid #444;
+  border-top-color: #222;
+
+  /* background: pink; */
+  font-family: monospace;
+  
+  overflow-y: auto;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLog .jp-SAGE2-socketLogItem {
+  display: block;
+
+  margin: 5px 0;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLog:hover {
+  height: 200px;
+
+  cursor: auto;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-socketLog:hover .jp-SAGE2-socketLogTitle {
+  background: #444;
+
+}
+
+.jp-SAGE2-dialogButton {
+  background-color: var(--sage2-green) !important;
+  margin-right: 5px;
+}
+
+.SAGE2-green-font {
+  color: var(--sage2-green);
+}
+
+.SAGE2-gray-font {
+  color: var(--sage2-gray);
+}
+
+.SAGE2-error-font {
+  color: var(--error-red);
+}
+
+:root {
+  --error-red: #B82D0E;
+  --gold: #f0ad4e;
+  --gold-light: #F2CD98;
+  --gold-unsat: #8A8264;
+  --sage2-gray: #434244;
+  --sage2-gray-l10: #5D5C5E;
+  --sage2-gray-l20: #767577;
+  --sage2-gray-d5: #363537;
+  --sage2-gray-d10: #2A292B;
+  --sage2-green: #0EB87B;
+  --sage2-green-l10: #28D295;
+  --sage2-green-l20: #41EBAE;
+  --sage2-green-d5: #01AB6E;
+  --sage2-green-d10: #009F62;
+
+  --link: #05A0C5;
+  --link-l10: #1FBADF;
+  --link-l20: #38D3F8;
+  --link-d5: #0093B8;
+  --link-d10: #0087AC;
+}

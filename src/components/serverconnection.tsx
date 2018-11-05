@@ -5,14 +5,7 @@ import * as React from 'react';
 import WebsocketIO from '../websocket.io';
 
 import { Log } from './log';
-
-/* tslint:disable */
-/**
- * We have configured the TSX transform to look for the h function in the local
- * module.
- */
-// const h = vdom.h;
-/* tslint:enable */
+import { ServerInfo } from './server-info';
 
 export class ServerConnection {
   constructor(options : ServerConnection.IOptions) {
@@ -48,54 +41,43 @@ export class ServerConnection {
 
     let classNames = "jp-SAGE2-serverConnection" + (this._connected ? "" : " jp-SAGE2-serverNotConnected");
 
-    // socket log element -- TODO: maybe abstract this into another ui-element?
-
-    // server version information 
-    let serverInfo: React.ReactElement<any> = this._serverInformation.version ? (
-      <div className="jp-SAGE2-versionInfo">
-        Version:
-          <span>
-          {this._serverInformation.version.base}
-        </span>
-        <span>
-          {this._serverInformation.version.branch}
-        </span>
-        <span>
-          {this._serverInformation.version.commit}
-        </span>
-        <span>
-          {this._serverInformation.version.date}
-        </span>
-      </div>
-    ) : (
-      <div className="jp-SAGE2-versionInfo">
-        No Version Info Found
-      </div>
-    );
-
     // icon for favorite connection status
-    let favicon: React.ReactElement<any> = this._isFavorite() ? (
-      <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={unfavorite}></i>
-    ) : (
-      <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
-    );
+    // let favicon: React.ReactElement<any> = this._isFavorite() ? (
+    //   <i className="favServer fa fa-star fa-2x" aria-hidden="true" onClick={this._isFavorite ? unfavorite : favorite}></i>
+    // ) : (
+    //   <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
+    // );
+
+    let favicon : React.ReactElement<any> = <i 
+      className={`favServer fa fa-star ${this._isFavorite() ? 'favorite' : ''}`}
+      aria-hidden="true"
+      onClick={this._isFavorite() ? unfavorite : favorite}
+    />;
 
     return (
       <div className={classNames}>
-        {favicon}
-        <h4>{this._name}</h4>
-        <a target="about:blank" href={this._url}>{this._url}</a>
+        <div className="jp-SAGE2-serverInfo">
+          <div className="jp-SAGE2-serverName">
+            {favicon}
+            {this._name}
+          </div>
+          <a
+            // className="jp-SAGE2-buttonLink"
+            target="about:blank"
+            href={this._url}>
+              {this._url}
+          </a>
+          <ServerInfo version={this._serverInformation.version}></ServerInfo>
+        </div>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
+          <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={edit}>
             Edit
           </button>
-          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
+          <button className="jp-SAGE2-buttonOther jp-SAGE2-button" onClick={remove}>
             Remove
           </button>
         </div>
-          <Log items={this._log}>
-          </Log>
-          {serverInfo}
+        <Log items={this._log}></Log>
       </div>
     );
   } 
@@ -116,17 +98,30 @@ export class ServerConnection {
       that._update();
     }
     
-    return (
-      <div className="jp-SAGE2-serverConnection">
-        <label>Server Name: <input onInput={nameChange} value={this._name}></input></label>
-        <label>Address: <input onInput={urlChange} value={this._url}></input></label>
+    return <div className="jp-SAGE2-serverConnection">
+        <span style={{color: "#666", margin: "15px 0 3px", display: "inline-block"}}>
+          Connection Information
+        </span>
+        <div className="jp-SAGE2-inputField">
+          <label>
+            <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
+              SAGE<span className="SAGE2-gray-font" >2</span>
+            </span> Server Name <input onInput={nameChange} value={this._name} />
+          </label>
+        </div>
+        <div className="jp-SAGE2-inputField">
+          <label>
+            <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
+              SAGE<span className="SAGE2-gray-font" >2</span>
+            </span> URL <input className="SAGE2-url" onInput={urlChange} value={this._url} />
+          </label>
+        </div>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={save}>
+          <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={save}>
             Save
           </button>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // get the name of a connection
@@ -155,16 +150,8 @@ export class ServerConnection {
   }
 
   // id = code cell ID, signal is object to connect/disconnect to/from
-  public setCellRegistered(id: string, signal: any, mime: string) {
+  public setCellRegistered(id: string, signal: any, mime: string, cellData: string) {
     this._registeredCells[id] = signal;
-
-    this._wsio.emit('startJupyterSharing', {
-      id: `${this._id}~${id}`,
-      title: "jupyter",
-      color: "green",
-      src: "raw", type: mime, encoding: "base64",
-      width: 600, height: 600
-    });
   }
 
   // accesors to set functions for remove, update, favoriting (plugin-wide behavior)
@@ -209,11 +196,21 @@ export class ServerConnection {
         that._wsio.emit('updateJupyterSharing', {
           id: `${that._id}~${cellID}`,
           src: base64,
+          mime,
           width: i.width,
           height: i.height,
           title,
           // cellId: cellId
         });
+
+        return {
+          id: `${that._id}~${cellID}`,
+          src: base64,
+          width: i.width,
+          height: i.height,
+          title,
+          // cellId: cellId
+        };
 
         // that._wsio.emit("loadImageFromBuffer", imageToSend);
       };
@@ -262,8 +259,9 @@ export class ServerConnection {
     }
 
     // reset registered update cells
-    for (let cell of this._registeredCells) {
-      cell.disconnect();
+
+    for (let cellId of Object.keys(this._registeredCells)) {
+      this._registeredCells[cellId].disconnect();
     }
     this._registeredCells = {};
 
@@ -389,7 +387,7 @@ export class ServerConnection {
 
   // connection information
   private _wsio : WebsocketIO = null;
-  private _connected: boolean = false;
+  public _connected: boolean = false;
 
   // updating cell list (auto send new output)
   private _registeredCells: any = {};

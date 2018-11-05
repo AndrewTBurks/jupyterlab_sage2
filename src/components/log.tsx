@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { LogEntry } from './log-entry'
+
 export
 interface ILogProps {
   items: Array<Array<String>>
@@ -13,27 +15,23 @@ interface ILogState {
 export class Log extends React.Component<ILogProps, ILogState> {
   constructor(props: any) {
     super(props);
-    
     this.state = {
       items: props.items
     };
   }
 
   render() : React.ReactElement<any> {
-    let log: React.ReactElement<any>[] = this.state.items.map((item: Array<String>) => {
-      return (
-        <div className="jp-SAGE2-socketLogItem">
-          <p>
-            {item[0]}> {item[1]}
-          </p>
-        </div>
-      );
-    });
+    let entries: React.ReactElement<any>[] = this.state.items.map((item: Array<String>) => (
+        <LogEntry item={item}></LogEntry>
+      ));
 
-    return (
+    return (<>
       <div className="jp-SAGE2-socketLog">
-        {log}
+        <div className="jp-SAGE2-socketLogTitle">Communication Log</div>
+        <div className="jp-SAGE2-socketLogList">
+          {entries}
+        </div>
       </div>
-    );
+      </>);
   }
 }

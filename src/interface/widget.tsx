@@ -59,6 +59,7 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
   // SAGE2 widget constructor
   constructor(options : Partial<SAGE2.IOptions> = {}) {
     super();
+
     this.id = "jp-SAGE2-" + _SAGE2Instances++;
     this.title.label = "SAGE2";
   }
@@ -77,11 +78,11 @@ class SAGE2 extends VDomRenderer<SAGE2Model> {
       <div className="jp-SAGE2-body">
         <div className="jp-SAGE2-title">
         </div>
-        <hr></hr>
+        {/* <hr></hr> */}
         <div className="jp-SAGE2-connections">
           {servers}
         </div>
-        <button className="jp-SAGE2-addServerButton jp-SAGE2-button" onClick={addonclick}>
+        <button className="jp-SAGE2-addServerButton jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={addonclick}>
           <i className="fa fa-3x fa-plus-circle"></i>
         </button>
       </div>

@@ -1,8 +1,6 @@
 *.bundle.*
 lib/
-style/out/
 node_modules/
 *.egg-info/
-PythonDataScienceHandbook/
+.ipynb_checkpoints
 *.ipynb
-.ipynb_checkpoints/
