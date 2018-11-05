@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab_sage2",
-  "version": "0.1.0",
+  "version": "0.35.0",
   "description": "A JupyterLab extension integrating the Jupyter data science workflow with the SAGE2 collaborative system.",
   "keywords": [
     "jupyter",
@@ -31,13 +31,16 @@
     "prepare": "npm run clean && npm run build"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.18.0",
-    "@jupyterlab/launcher": "^0.18.4",
-    "@jupyterlab/mainmenu": "^0.7.4"
+    "@jupyterlab/application": "^0.19.1",
+    "@jupyterlab/launcher": "^0.19.1",
+    "@jupyterlab/mainmenu": "^0.8.1",
+    "@jupyterlab/notebook": "^0.19.2",
+    "react": "~16.4.2"
   },
   "devDependencies": {
-    "rimraf": "^2.6.1",
-    "typescript": "~2.9.2"
+    "@types/react": "~16.4.13",
+    "rimraf": "~2.6.2",
+    "typescript": "~3.1.1"
   },
   "jupyterlab": {
     "extension": true

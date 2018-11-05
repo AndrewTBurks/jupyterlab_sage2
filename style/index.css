@@ -283,7 +283,7 @@
   font-weight: lighter;
   color: var(--error-red);
   /* using this color messes up contrast */
-  /* background-color: #ffd6d6; */
+  background-color: #ffd6d6;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons {
