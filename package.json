@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab_sage2",
-  "version": "1.4.1",
+  "version": "1.1.4",
   "description": "A JupyterLab extension integrating the Jupyter data science workflow with the SAGE2 collaborative system.",
   "keywords": [
     "jupyter",
