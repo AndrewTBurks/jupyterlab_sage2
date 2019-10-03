@@ -1,12 +1,7 @@
-// import {
-//   JupyterLab, JupyterLabPlugin
-// } from '@jupyterlab/application';
-
 import {
   // @ts-ignore
   JupyterFrontEnd, JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-
 
 import {
   ILauncher
@@ -30,8 +25,6 @@ import {
   Dialog,
   showDialog,
   UseSignal,
-  // ICommandPalette,
-  // InstanceTracker,
 } from "@jupyterlab/apputils";
 
 import {
@@ -51,8 +44,6 @@ import {
 import { SAGE2 } from "./interface/widget";
 import { ServerConnection } from "./interface/ui-elements";
 
-// import { ISAGE2Tracker } from "./tracker";
-
 import '../style/index.css';
 import { Signal } from '@phosphor/signaling';
 
@@ -66,7 +57,6 @@ let fav_SAGE2: ServerConnection = null;
 
 let triggerWidgetUpdate : Function | null = null;
 
-// let tracker: InstanceTracker<SAGE2> = null;
 let menu : Menu = null;
 
 /**
@@ -75,10 +65,8 @@ let menu : Menu = null;
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab_sage2',
   requires: [
-    IMainMenu,
-    // ILayoutRestorer
+    IMainMenu
   ],
-  // provides: ISAGE2,
   optional: [
     ILauncher
   ],
@@ -102,64 +90,13 @@ const extension: JupyterFrontEndPlugin<void> = {
 };
 
 /**
- * Initialization data for the jupyterlab_sage2 extension.
- */
-/*
- const extension: JupyterLabPlugin<void> = {
-  id: 'jupyterlab_sage2',
-  autoStart: true,
-  requires: [
-    IMainMenu,
-    // ILayoutRestorer
-  ],
-  provides: ISAGE2Tracker,
-  optional: [
-    ILauncher
-  ],
-
-
-  activate: (app: JupyterLab, mainMenu: IMainMenu, launcher: ILauncher | null) => {
-    const { commands } = app;
-    const namespace = "sage2";
-    tracker = new InstanceTracker<SAGE2>({ namespace });
-
-    console.log("SAGE2 Loaded!");
-    console.log("Commands:", commands.listCommands());
-
-    // add SAGE2 commands to JupyterLab
-    addCommands(app, tracker, mainMenu);
-
-    console.log(supportedCellOutputs);
-
-
-    if (launcher) {
-      launcher.add({
-        command: 'sage2:open-widget',
-        category: 'Other',
-        rank: 0
-      });
-    }
-
-
-    // create menu object
-    menu = createMenu(app);
-    mainMenu.addMenu(menu, { rank: 20 });
-
-    console.log(commands.iconClass(CommandIDs.openWidget, {}));
-  }
-};
-*/
-
-/**
  * Creates a menu for the SAGE2 Extension.
  */
 function createMenu(app: JupyterFrontEnd): Menu {
   let { commands } = app;
   let menu = new Menu({ commands: commands });
-  // let connection = new Menu({ commands: commands });
 
   menu.title.label = 'SAGE2';
-  // connection.title.label = 'Send to';
   // menu.addItem({ command: CommandIDs.openWidget });
 
   // menu.addItem({ type: 'separator' });
@@ -324,16 +261,6 @@ function addCommands(
 
       // shell.add(sage2);
 
-      // specify getConnections function based on connection set which is contained in plugin
-      // sage2.getConnections = () => {
-      //   return _SAGE2_Connections;
-      // };
-
-      // // specify addServer function -- executes serverConnect command
-      // sage2.addServer = () => {
-      //   commands.execute(CommandIDs.serverConnect, {});
-      // };
-
       // add sage2 widget to the tracker
       // tracker.add(sage2).then(() => {
       //   // add tab to main area
@@ -392,9 +319,6 @@ function addCommands(
 
       _SAGE2_Connections.push(newConnection);
 
-      // if (tracker.currentWidget) {
-      //   tracker.currentWidget.update();
-      // }
       console.log("Updating Widget");
       updateWidget();
     },

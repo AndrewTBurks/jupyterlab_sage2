@@ -1,6 +1,6 @@
 FROM jupyter/datascience-notebook
 
-MAINTAINER Andrew Burks <andrewtburks@gmail.com>
+LABEL maintainer="Andrew Burks <andrewtburks@gmail.com>""
 
 USER root
 COPY . /tmp/jupyterlab_sage2/

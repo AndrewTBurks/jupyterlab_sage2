@@ -181,8 +181,6 @@ export class ServerConnection {
     let urlInput = useRef<any>();
 
     let save = useCallback(() => {
-      console.log(nameInput.current, urlInput.current);
-
       this.saveEdits(
         nameInput.current.value,
         urlInput.current.value)
@@ -387,42 +385,44 @@ export class ServerConnection {
 
       // unfavorite
       this._favorite(false);
+
+      let that = this;
+  
+      this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
+      this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
+      
+      // reinitialize server information object
+      this._serverInformation = {};
+  
+      // open connection to server
+      this._wsio.open(function() {
+        // that._isConnecting = true;
+        // that._update();
+  
+        // initialize listeners for incoming information from server
+        that.setupListeners();
+  
+        // Special Jupyter Client
+        var clientDescription = {
+          clientType: "jupyter",
+          requests: {
+            config: true,
+            version: true,
+            time: false,
+            console: false
+          }
+        };
+        // add client and request file listing
+        that._wsio.emit('addClient', clientDescription);
+        that._wsio.emit('requestStoredFiles');
+        
+      });
+      
+      // update UI
+      this._isConnecting = true;
+      this._update();
     }
 
-    let that = this;
-
-    this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
-    this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
-    
-    // reinitialize server information object
-    this._serverInformation = {};
-
-    // open connection to server
-    this._wsio.open(function() {
-      // that._isConnecting = true;
-      // that._update();
-
-      // initialize listeners for incoming information from server
-      that.setupListeners();
-
-      // Special Jupyter Client
-      var clientDescription = {
-        clientType: "jupyter",
-        requests: {
-          config: true,
-          version: true,
-          time: false,
-          console: false
-        }
-      };
-      // add client and request file listing
-      that._wsio.emit('addClient', clientDescription);
-      that._wsio.emit('requestStoredFiles');
-      
-    });
-    
-    // update UI
-    this._isConnecting = true;
     this._update();
   }
 
