@@ -1,31 +1,21 @@
 import * as React from 'react';
 
+import { FaServer, FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
+
 export
   interface ILogEntryProps {
   item: Array<String>
 };
 
-export
-  interface ILogEntryState {
-  item: Array<String>
-}
+export function LogEntry(props: ILogEntryProps) {
+  return (
+    <div className="jp-SAGE2-socketLogItem">
+      {/* <div> */}
+      <span className="jp-SAGE2-socketLogItemDir">
+        <FaServer />{props.item[0] === "Send" ? <FaAngleDoubleRight color={"#fc8d62"} /> : <FaAngleDoubleLeft color={"#8da0cb"}/>}
+      </span> {props.item[1]}
+      {/* </div> */}
+    </div>
+  );
 
-export class LogEntry extends React.Component<ILogEntryProps, ILogEntryState> {
-  constructor(props: ILogEntryProps) {
-    super(props);
-
-    this.state = {
-      item: props.item
-    };
-  }
-
-  render() {
-    return (
-      <div className="jp-SAGE2-socketLogItem">
-        {/* <div> */}
-          {this.state.item[0]}> {this.state.item[1]}
-        {/* </div> */}
-      </div>
-    );
-  }
 }

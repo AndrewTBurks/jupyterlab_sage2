@@ -7,21 +7,49 @@ import WebsocketIO from '../websocket.io';
 import { Log } from './log';
 import { ServerInfo } from './server-info';
 
+import {
+  FaNetworkWired,
+  FaInfoCircle,
+  FaLink
+} from 'react-icons/fa';
+
+import {
+  animated,
+  useSpring,
+} from 'react-spring';
+
+import * as jp from "../../style/img/jupyter.png";
+import * as s2 from "../../style/img/S2-512.png";
+// import SAGE2Logo from "../../style/img/sage2a-green_final.svg"
+
+let {
+  // useState,
+  useCallback,
+  useRef,
+} = React;
+
+const NetworkWired = animated(FaNetworkWired);
+
 export class ServerConnection {
   constructor(options : ServerConnection.IOptions) {
     // initialize url and name
     // make sure the url has http or https prepended -- TODO: check this code
     this._url = options.url.indexOf("http://") || options.url.indexOf("https://") ? options.url : "http://" + options.url;
     this._name = options.name ? options.name : "SAGE2 Server";
+
+    this.EditableServer = this.EditableServer.bind(this);
+    this.EstablishedServer = this.EstablishedServer.bind(this);
   }
 
   // create vdom.VirtualElement method creates an editable or established server based on _editing state
-  createElement() : React.ReactElement<any> {
-    return this._editing ? this.editableServer() : this.establishedServer();
+  static Element({connection} : {connection: ServerConnection}) : React.ReactElement<any> {
+    let Card = connection._editing ? connection.EditableServer : connection.EstablishedServer;
+
+    return <Card />;
   }
 
   // construct vdom VirtualElement for an established server (no inputs)
-  private establishedServer(): React.ReactElement<any> {
+  private EstablishedServer(): React.ReactElement<any> {
     // wrap this._remove in lambda
     let remove = () => {
       // close websocket
@@ -48,6 +76,34 @@ export class ServerConnection {
     //   <i className="favServer fa fa-star-o fa-2x" aria-hidden="true" onClick={favorite}></i>
     // );
 
+    let serverName = useSpring({
+      color: this._connected ? "#0EB87B" : "#B82D0E",
+      backgroundColor: this._connected ? "#f0f0f0" : "#ffd6d6"
+    })
+
+    let s2Icon = useSpring({
+      opacity: this._connected ? 1 : 0.25,
+      from: {
+        opacity: 0.25
+      }
+    });
+
+    let s2Link = useSpring({
+      strokeDashoffset: this._connected ? 0 : 100,
+      stroke: this._connected ? "#0093B8" : "#B82D0E",
+      from: { 
+        strokeDashoffset: 100,
+        stroke: "#B82D0E",
+      }
+    });
+
+    let networkIcon = useSpring({
+      fill: this._connected ? "#0093B8" : "#B82D0E",
+      from: {
+        fill: "#B82D0E",
+      }
+    }) as any;
+
     let favicon : React.ReactElement<any> = <i 
       className={`favServer fa fa-star ${this._isFavorite() ? 'favorite' : ''}`}
       aria-hidden="true"
@@ -57,17 +113,53 @@ export class ServerConnection {
     return (
       <div className={classNames}>
         <div className="jp-SAGE2-serverInfo">
-          <div className="jp-SAGE2-serverName">
+          <animated.div className="jp-SAGE2-serverName" style={serverName}>
             {favicon}
             {this._name}
+          </animated.div>
+          <div className="jp-SAGE2-connectionVis">
+            <div className="jp-SAGE2-connectionEndpoint">
+              <img src={jp} alt="JupyterLab" />
+            </div>
+            <div className="jp-SAGE2-connectionVisLink">
+              <svg className="jp-SAGE2-connectionLine" viewBox="0 0 100 100" preserveAspectRatio="none" shapeRendering="geometricPrecison">
+                <animated.path 
+                  d="M 5 50 L 95 50"
+                  strokeDasharray="100% 100%"
+                  style={{
+                    ...s2Link,
+                    strokeWidth: 4,
+                    strokeLinecap: "round"
+                  }}
+                />
+              </svg>
+              <NetworkWired size="3em" color={networkIcon.fill}/>
+            </div>
+            <div className="jp-SAGE2-connectionEndpoint" style={{position: "relative"}}>
+              <animated.img src={s2} alt="SAGE2" style={s2Icon}/>
+              {(
+                // true
+                this._isConnecting
+                && <div className="lds-ripple"><div></div><div></div></div>)
+                || null
+              }
+            </div>
+            {/* <SAGE2Logo /> */}
           </div>
-          <a
-            // className="jp-SAGE2-buttonLink"
-            target="about:blank"
-            href={this._url}>
-              {this._url}
-          </a>
-          <ServerInfo version={this._serverInformation.version}></ServerInfo>
+          <div>
+            <a
+              // className="jp-SAGE2-buttonLink"
+              style={{
+                fontWeight: "bold"
+              }}
+              target="about:blank"
+              href={this._url}>
+                <FaLink color="#0093B8"/> {this._url}
+            </a>
+          </div>
+          <div style={{color: "var(--sage2-gray-l10)"}}>
+            <FaInfoCircle /> <ServerInfo version={this._serverInformation.version}/>
+          </div>
         </div>
         <div className="jp-SAGE2-serverButtons">
           <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={edit}>
@@ -83,20 +175,29 @@ export class ServerConnection {
   } 
 
   // construct vdom VirtualElement for editable server -- contains input fields for name/address
-  private editableServer(): React.ReactElement<any> {
+  private EditableServer(): React.ReactElement<any> {
     // wrap this.saveEdits in lambda
-    let save = () => this.saveEdits();
+    let nameInput = useRef<any>();
+    let urlInput = useRef<any>();
 
-    let that = this;
-    let nameChange = function (event: React.FormEvent<HTMLInputElement>) {
-      that._name = (event.target as any).value;
-      that._update();
-    }
+    let save = useCallback(() => {
+      console.log(nameInput.current, urlInput.current);
 
-    let urlChange = function (event: React.FormEvent<HTMLInputElement>) {
-      that._url = (event.target as any).value;
-      that._update();
-    }
+      this.saveEdits(
+        nameInput.current.value,
+        urlInput.current.value)
+    }, [nameInput.current, urlInput.current]);
+    
+    // let that = this;
+    // let nameChange = function (event: React.FormEvent<HTMLInputElement>) {
+    //   that._name = (event.target as any).value;
+    //   that._update();
+    // }
+
+    // let urlChange = function (event: React.FormEvent<HTMLInputElement>) {
+    //   that._url = (event.target as any).value;
+    //   that._update();
+    // }
     
     return <div className="jp-SAGE2-serverConnection">
         <span style={{color: "#666", margin: "15px 0 3px", display: "inline-block"}}>
@@ -106,17 +207,17 @@ export class ServerConnection {
           <label>
             <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
               SAGE<span className="SAGE2-gray-font" >2</span>
-            </span> Server Name <input onInput={nameChange} value={this._name} />
+            </span> Server Name <input ref={nameInput} defaultValue={this._name} />
           </label>
         </div>
         <div className="jp-SAGE2-inputField">
           <label>
             <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
               SAGE<span className="SAGE2-gray-font" >2</span>
-            </span> URL <input className="SAGE2-url" onInput={urlChange} value={this._url} />
+            </span> URL <input className="SAGE2-url" ref={urlInput} defaultValue={this._url} />
           </label>
         </div>
-        <div className="jp-SAGE2-serverButtons">
+        <div className="jp-SAGE2-serverButtons" style={{marginBottom: "5px"}}>
           <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={save}>
             Save
           </button>
@@ -252,33 +353,41 @@ export class ServerConnection {
   private startEditing() {
     this._editing = true;
 
-    // reset websocket
-    if (this._wsio) {
-      this._wsio.close();
-      this._wsio = null;
-    }
-
-    // reset registered update cells
-
-    for (let cellId of Object.keys(this._registeredCells)) {
-      this._registeredCells[cellId].disconnect();
-    }
-    this._registeredCells = {};
-
-    // clear log
-    this.clearLog();
-
-    // unfavorite
-    this._favorite(false);
-
     // update widget render
     this._update();
   }
 
-  private saveEdits() {
+  private saveEdits(name: string, url: string) {
     this._editing = false;
+
+    let oldUrl = this._url;
+
     // ensure correct URL formatting
-    this._url = this._url.indexOf("http://") || this._url.indexOf("https://") ? this._url : "http://" + this._url;
+    this._name = name;
+    this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
+
+    // if it needs to be reset because url is new
+    if (oldUrl !== this._url) {
+      // reset websocket
+      if (this._wsio) {
+        this._wsio.close();
+        this._wsio = null;
+        this._connected = false;
+      }
+
+      // reset registered update cells
+
+      for (let cellId of Object.keys(this._registeredCells)) {
+        this._registeredCells[cellId].disconnect();
+      }
+      this._registeredCells = {};
+
+      // clear log
+      this.clearLog();
+
+      // unfavorite
+      this._favorite(false);
+    }
 
     let that = this;
 
@@ -290,26 +399,30 @@ export class ServerConnection {
 
     // open connection to server
     this._wsio.open(function() {
+      // that._isConnecting = true;
+      // that._update();
+
       // initialize listeners for incoming information from server
       that.setupListeners();
 
       // Special Jupyter Client
       var clientDescription = {
-          clientType: "jupyter",
-          requests: {
-            config: true,
-            version: true,
-            time: false,
-            console: false
-          }
-        };
-
-        // add client and request file listing
-        that._wsio.emit('addClient', clientDescription);
-        that._wsio.emit('requestStoredFiles');
+        clientType: "jupyter",
+        requests: {
+          config: true,
+          version: true,
+          time: false,
+          console: false
+        }
+      };
+      // add client and request file listing
+      that._wsio.emit('addClient', clientDescription);
+      that._wsio.emit('requestStoredFiles');
+      
     });
     
     // update UI
+    this._isConnecting = true;
     this._update();
   }
 
@@ -320,6 +433,7 @@ export class ServerConnection {
     this._wsio.on('initialize', function (data: any) {
       that._id = data.UID;
       that._connected = true;
+      that._isConnecting = false;
 
       that._update();
       // that.startConnection();
@@ -327,6 +441,7 @@ export class ServerConnection {
 
     this._wsio.on('close', function (data: any) {
       that._connected = false;
+      that._isConnecting = false;
 
       that._update();
     });
@@ -387,6 +502,7 @@ export class ServerConnection {
 
   // connection information
   private _wsio : WebsocketIO = null;
+  public _isConnecting: boolean = false;
   public _connected: boolean = false;
 
   // updating cell list (auto send new output)
@@ -396,7 +512,7 @@ export class ServerConnection {
   private _log : Array<Array<string>> = [];
 
   // state variable for if the server is being edited
-  private _editing: boolean = true;
+  public _editing: boolean = true;
   
   // functions passed in for plugin-wide behavior
   private _remove: DisposableDelegate;

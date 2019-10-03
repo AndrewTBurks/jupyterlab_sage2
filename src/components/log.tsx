@@ -1,37 +1,44 @@
 import * as React from 'react';
 
-import { LogEntry } from './log-entry'
+import { FaStream } from 'react-icons/fa';
+import { LogEntry } from './log-entry';
+
+import { animated, useSpring } from 'react-spring';
+
+const {
+  useState
+} = React;
 
 export
 interface ILogProps {
   items: Array<Array<String>>
 };
 
-export
-interface ILogState {
-  items: Array<Array<String>>
-}
+export function Log(props: ILogProps) {
+  let [isOpen, setOpen] = useState(false);
 
-export class Log extends React.Component<ILogProps, ILogState> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      items: props.items
-    };
-  }
+  let listStyle = useSpring({
+    maxHeight: isOpen ? "150px" : "0px"
+  });
 
-  render() : React.ReactElement<any> {
-    let entries: React.ReactElement<any>[] = this.state.items.map((item: Array<String>) => (
-        <LogEntry item={item}></LogEntry>
-      ));
+  let badgeStyle = useSpring({
+    borderColor: props.items.length ? "#66c2a5" : "#b3e2cd",
+    color: props.items.length ? "#f0f0f0" : "#aaa",
+    backgroundColor: props.items.length ? "#1b9e77" : "#333"
+    // maxHeight: isOpen ? "150px" : "0px"
+  });
 
-    return (<>
-      <div className="jp-SAGE2-socketLog">
-        <div className="jp-SAGE2-socketLogTitle">Communication Log</div>
-        <div className="jp-SAGE2-socketLogList">
-          {entries}
-        </div>
-      </div>
-      </>);
-  }
+  return <div className={`jp-SAGE2-socketLog ${isOpen ? "open" : ""}`}>
+    <div 
+      className="jp-SAGE2-socketLogTitle" 
+      onClick={() => setOpen(o => !o)}
+    ><FaStream className="jp-SAGE2-streamIcon"/> Communication Log
+      <animated.span className="jp-SAGE2-logCount" style={badgeStyle}>{props.items.length}</animated.span>
+    </div>
+    <animated.div className="jp-SAGE2-socketLogList" style={listStyle}>
+      {props.items.map((item: Array<String>, i) => (
+        <LogEntry key={i} item={item}></LogEntry>
+      ))}
+    </animated.div>
+  </div>;
 }

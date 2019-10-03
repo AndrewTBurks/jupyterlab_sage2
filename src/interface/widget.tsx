@@ -1,6 +1,10 @@
-import {
+// import {
+//   Widget
+// } from '@phosphor/widgets';
 
-} from '@phosphor/widgets';
+// import {
+//   ReactWidget
+// } from '@jupyterlab/apputils'
 
 import {
 } from '@phosphor/disposable';
@@ -13,15 +17,27 @@ import {
 
 import * as React from 'react';
 
+
 import {
   ServerConnection
 } from './ui-elements';
 
 import {
-  VDomModel, VDomRenderer
-} from '@jupyterlab/apputils';
+  FaPlus
+} from 'react-icons/fa';
 
-let _SAGE2Instances = 0;
+// import { UseSignal } from '@jupyterlab/apputils';
+
+// import {
+//   VDomModel, VDomRenderer
+// } from '@jupyterlab/apputils';
+
+// const {
+//   useState,
+//   useEffect
+// } = React;
+
+// let _SAGE2Instances = 0;
 
 /* tslint:disable */
 /**
@@ -31,16 +47,16 @@ let _SAGE2Instances = 0;
 // const h = vdom.h;
 /* tslint:enable */
 
-export
-class SAGE2Model extends VDomModel {
+// export
+// class SAGE2Model extends VDomModel {
 
-}
+// }
 
 /**
  * The SAGE2 interface.
  */
 // export
-//   interface SAGE2 {
+// interface SAGE2 {
 //   /**
 //    * Add a command item to the launcher, and trigger re-render event for parent
 //    * widget.
@@ -55,49 +71,88 @@ class SAGE2Model extends VDomModel {
 // }
 
 export
-class SAGE2 extends VDomRenderer<SAGE2Model> {
-  // SAGE2 widget constructor
-  constructor(options : Partial<SAGE2.IOptions> = {}) {
-    super();
+function SAGE2(props: Partial<SAGE2.IOptions> = {}) {
+  // map connections to vdom VirtualNodes
 
-    this.id = "jp-SAGE2-" + _SAGE2Instances++;
-    this.title.label = "SAGE2";
-  }
+  // let [ serverConnections, updateServerConnections ] = useState(props.connections);
+  let servers = props.connections.map((connection: ServerConnection, i) => <ServerConnection.Element key={i} connection={connection}/>);
 
-  // render connections
-  protected render(): React.ReactElement<any> | React.ReactElement<any>[] {
-    // map connections to vdom VirtualNodes
-    let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
+  // console.log(serverConnections);
 
-    // add server click event listener
-    let addonclick = () => {
-      this.addServer();
-    };
+  // useEffect(() => {
+  //   props.setUpdater(updateServerConnections);
 
-    return (
-      <div className="jp-SAGE2-body">
-        <div className="jp-SAGE2-title">
-        </div>
-        {/* <hr></hr> */}
-        <div className="jp-SAGE2-connections">
-          {servers}
-        </div>
-        <button className="jp-SAGE2-addServerButton jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={addonclick}>
-          <i className="fa fa-3x fa-plus-circle"></i>
-        </button>
+  //   return () => props.setUpdater(null);
+  // }, [])
+
+  // add server click event listener
+  let addonclick = () => {
+    props.addServer();
+  };
+
+  return (
+    <div className="jp-SAGE2-body">
+      <div className="jp-SAGE2-title">
       </div>
-    );
-  }
-  
-  // public functions
-  public getConnections: Function = null;
-  public addServer: Function = null;
+      {/* <hr></hr> */}
+      <div className="jp-SAGE2-connections">
+        {servers}
+      </div>
+      <button className="jp-SAGE2-addServerButton jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={addonclick}>
+        {/* <i className="fa fa-3x fa-plus-circle"></i> */}
+        <FaPlus size={"2.5em"}/>
+      </button>
+    </div>
+  );
 }
+
+// export
+// class SAGE2 extends ReactWidget {
+//   // SAGE2 widget constructor
+//   constructor(options : Partial<SAGE2.IOptions> = {}) {
+//     super();
+
+//     this.id = "jp-SAGE2-" + _SAGE2Instances++;
+//     this.title.label = "SAGE2";
+//   }
+
+//   // render connections
+//   protected render(): React.ReactElement<any> | React.ReactElement<any>[] {
+//     // map connections to vdom VirtualNodes
+//     let servers = this.getConnections().map((connection : ServerConnection) => connection.createElement())
+
+//     // add server click event listener
+//     let addonclick = () => {
+//       this.addServer();
+//     };
+
+//     return (
+//       <div className="jp-SAGE2-body">
+//         <div className="jp-SAGE2-title">
+//         </div>
+//         {/* <hr></hr> */}
+//         <div className="jp-SAGE2-connections">
+//           {servers}
+//         </div>
+//         <button className="jp-SAGE2-addServerButton jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={addonclick}>
+//           <i className="fa fa-3x fa-plus-circle"></i>
+//         </button>
+//       </div>
+//     );
+//   }
+  
+//   // public functions
+//   public getConnections: Function = null;
+//   public addServer: Function = null;
+// }
 
 export
 namespace SAGE2 {
   export
   interface IOptions {
-    id: string
+    id: string,
+    connections: any[],
+    setUpdater: Function
+    addServer: Function
   };
 }
