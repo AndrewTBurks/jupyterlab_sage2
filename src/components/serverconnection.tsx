@@ -271,7 +271,7 @@ export class ServerConnection {
   }
 
   // send cell data to SAGE2 through websocket
-  public sendCellData(data: any, mime: string, title: string, cellID: string) {
+  public sendCellData(data: any, mime: string, title: string, cellID: string, code: string) {
     let that = this;
 
     if (mime.indexOf("image") >= 0) {
@@ -299,6 +299,7 @@ export class ServerConnection {
           width: i.width,
           height: i.height,
           title,
+          code
           // cellId: cellId
         });
 

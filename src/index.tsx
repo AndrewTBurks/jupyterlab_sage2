@@ -506,7 +506,8 @@ function addCommands(
                   `${shell.currentWidget.title.label} [${
                     notebook.activeCellIndex + 1
                   }]`,
-                  cellModel.id
+                  cellModel.id,
+                  cellModel.value.text
                 );
               }
             },
@@ -522,7 +523,8 @@ function addCommands(
           `${shell.currentWidget.title.label} [${
             notebook.activeCellIndex
           }]`,
-          cellModel.id
+          cellModel.id,
+          cellModel.value.text
         );
         break;
       }
