@@ -28,8 +28,14 @@ import {
 } from "@jupyterlab/apputils";
 
 import {
-  NotebookPanel
+  NotebookPanel,
 } from "@jupyterlab/notebook";
+
+
+import {
+  CodeCellModel,
+  MarkdownCellModel
+} from "@jupyterlab/cells";
 
 import {
   ArrayExt
@@ -109,6 +115,9 @@ function createMenu(app: JupyterFrontEnd): Menu {
   menu.addItem({ command: CommandIDs.sendNotebookCell });
   menu.addItem({ command: CommandIDs.sendNotebook });
 
+  menu.addItem({ type: 'separator' });
+  menu.addItem({ command: CommandIDs.subscribeNotebook });
+
   return menu;
 }
 
@@ -134,6 +143,9 @@ namespace CommandIDs {
 
   export
   const sendNotebook = 'sage2:send-notebook';
+
+  export
+  const subscribeNotebook = 'sage2:subscribe-notebook';
 };
 
 // similar render priority, specifying the ranking of types which can be handled by SAGE2
@@ -288,7 +300,7 @@ function addCommands(
     execute: args => {
       console.log("Connect to Server!");
 
-      console.log(CommandIDs.serverConnect, _SAGE2_Connections);
+      // console.log(CommandIDs.serverConnect, _SAGE2_Connections);
 
       let options: ServerConnection.IOptions = ServerConnection.defaultOptions;
 
@@ -405,7 +417,7 @@ function addCommands(
   });
 
   commands.addCommand(CommandIDs.sendNotebookCellFav, {
-    label: "Send Cell to Favorite",
+    label: "★ Send Cell",
     execute: args => {
       let connection = fav_SAGE2;
 
@@ -418,7 +430,7 @@ function addCommands(
   });
 
   commands.addCommand(CommandIDs.sendNotebookFav, {
-    label: "Send Notebook to Favorite",
+    label: "★ Send Notebook File",
     execute: args => {
       let connection = fav_SAGE2;
       
@@ -426,6 +438,82 @@ function addCommands(
     },
     isEnabled: () => {
       return hasFavoriteSAGE2() && hasNotebookToSend();
+    }
+  });
+
+  commands.addCommand(CommandIDs.subscribeNotebook, {
+    label: "★ Send Notebook",
+    execute: args => {
+      // let connection = fav_SAGE2;
+      let notebook = shell.currentWidget as NotebookPanel;
+      const show_markdown = true;
+
+      // console.log(notebook);
+      let kernel_id = notebook.session.kernel.id;
+      console.log(kernel_id, notebook);
+
+      console.log(notebook.model.toJSON())
+      // console.log(notebook.model.cells);
+
+      //* need: cells, metadata
+
+      // console.log(
+      //   Array.from(notebook.model.cells.iter())
+      // );
+
+      let notebookJSON : any = notebook.model.toJSON();
+
+      // let cells = [];
+      let notebookCells = notebook.model.cells;
+
+      for(let i = 0; i < notebook.model.cells.length; i++) {
+        let cell = notebookCells.get(i);
+        // console.log(cell.toJSON());
+
+        if (cell.type === "code") {
+          // cells.push(cell);
+          let codeCell = cell as CodeCellModel;
+
+          codeCell.outputs.changed.connect((sender, args) => {
+            console.log(args);
+          });
+          // 
+        } else if (show_markdown && cell.type === "markdown") {
+          let mdCell = cell as MarkdownCellModel;
+
+          mdCell.contentChanged.connect((sender, args) => {
+            console.log(args);
+          });
+        }
+      }
+
+      // notebookJSON.cells = cells;
+
+      // console.log(cell);
+
+      let infoToSend = {
+        notebook: notebookJSON,
+        show_markdown: show_markdown
+      }
+
+      console.log(infoToSend);
+
+      // subscribe to changes (cell added or removed)
+      notebook.model.cells.changed.connect((sender, args) => {
+        console.log(args);
+        if (args.type === "add") {
+
+        } else if (args.type === "remove") {
+
+        }
+      });
+
+      
+      // sendNotebookTo(connection);
+    },
+    isEnabled: () => {
+      // return hasFavoriteSAGE2() && hasNotebookToSend();
+      return hasNotebookToSend();
     }
   });
 
