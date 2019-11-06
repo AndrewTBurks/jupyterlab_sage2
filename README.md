@@ -1,11 +1,11 @@
 
 # jupyterlab_sage2
 
-![npm](https://img.shields.io/npm/dt/jupyterlab_sage2)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/andrewtburks/jupyterlab_sage2)
+[![npm](https://img.shields.io/npm/dt/jupyterlab_sage2)](https://npm.im/jupyterlab_sage2)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/andrewtburks/jupyterlab_sage2)](https://github.com/AndrewTBurks/jupyterlab_sage2)
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sage2/jupyterlab-datascience-notebook)
-![Docker Pulls](https://img.shields.io/docker/pulls/sage2/jupyterlab-datascience-notebook)
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sage2/jupyterlab-datascience-notebook)
+![Docker Pulls](https://img.shields.io/docker/pulls/sage2/jupyterlab-datascience-notebook)](https://hub.docker.com/r/sage2/jupyterlab-datascience-notebook)
 
 A JupyterLab extension to integrate SAGE2 into the JupyterLab scientific workflow.
 
