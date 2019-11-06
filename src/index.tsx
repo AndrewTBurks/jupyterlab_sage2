@@ -444,80 +444,113 @@ function addCommands(
   commands.addCommand(CommandIDs.subscribeNotebook, {
     label: "★ Send Notebook",
     execute: args => {
-      // let connection = fav_SAGE2;
-      let notebook = shell.currentWidget as NotebookPanel;
-      const show_markdown = true;
+      let server = fav_SAGE2;
 
-      // console.log(notebook);
-      let kernel_id = notebook.session.kernel.id;
-      console.log(kernel_id, notebook);
-
-      console.log(notebook.model.toJSON())
-      // console.log(notebook.model.cells);
-
-      //* need: cells, metadata
-
-      // console.log(
-      //   Array.from(notebook.model.cells.iter())
-      // );
-
-      let notebookJSON : any = notebook.model.toJSON();
-
-      // let cells = [];
-      let notebookCells = notebook.model.cells;
-
-      for(let i = 0; i < notebook.model.cells.length; i++) {
-        let cell = notebookCells.get(i);
-        // console.log(cell.toJSON());
-
-        if (cell.type === "code") {
-          // cells.push(cell);
-          let codeCell = cell as CodeCellModel;
-
-          codeCell.outputs.changed.connect((sender, args) => {
-            console.log(args);
-          });
-          // 
-        } else if (show_markdown && cell.type === "markdown") {
-          let mdCell = cell as MarkdownCellModel;
-
-          mdCell.contentChanged.connect((sender, args) => {
-            console.log(args);
-          });
-        }
-      }
-
-      // notebookJSON.cells = cells;
-
-      // console.log(cell);
-
-      let infoToSend = {
-        notebook: notebookJSON,
-        show_markdown: show_markdown
-      }
-
-      console.log(infoToSend);
-
-      // subscribe to changes (cell added or removed)
-      notebook.model.cells.changed.connect((sender, args) => {
-        console.log(args);
-        if (args.type === "add") {
-
-        } else if (args.type === "remove") {
-
+      return showDialog({
+        title: "Share a Notebook Dynamically to a SAGE2 Server",
+        body: `Choose content to send:`,
+        buttons: [
+          Dialog.createButton({
+            label: "Code",
+            caption: "Code Only",
+            className: "jp-SAGE2-dialogButton"
+          }),
+          Dialog.createButton({
+            label: "Code+MD",
+            caption: "Code and MD",
+            className: "jp-SAGE2-dialogButton"
+          }),
+          Dialog.cancelButton()
+        ]
+      }).then(result => {
+        if (result.button.accept) {
+          sendNotebookToDynamic(
+            server,
+            result.button.caption === "Code Only" ? false : true
+          );
+        } else {
+          console.log("Cancel send operation");
+          return;
         }
       });
-
-      
-      // sendNotebookTo(connection);
     },
     isEnabled: () => {
-      // return hasFavoriteSAGE2() && hasNotebookToSend();
-      return hasNotebookToSend();
+      return hasFavoriteSAGE2() && hasNotebookToSend();
     }
   });
 
-  // console.log(hasWidget(), hasSAGE2(), hasFavoriteSAGE2());
+  function sendNotebookToDynamic(server: ServerConnection, show_markdown: boolean) {
+    let notebook = shell.currentWidget as NotebookPanel;
+
+    let kernel_id = notebook.session.kernel.id;
+    let notebookJSON: any = notebook.model.toJSON();
+
+    let notebookCells = notebook.model.cells;
+
+    for (let i = 0; i < notebook.model.cells.length; i++) {
+      let cell = notebookCells.get(i);
+
+      if (cell.type === "code") {
+        let codeCell = cell as CodeCellModel;
+
+        if (!server.isCellRegistered(codeCell.id)) {
+          server.setCellRegistered(
+            codeCell.id,
+            codeCell.outputs.changed
+          );
+
+          codeCell.outputs.changed.connect((sender, args) => {
+            let toSend = {
+              cell: codeCell.toJSON(),
+              ind: i,
+              kernel_id
+            };
+
+            server.updateDynamicNotebookCell(toSend);
+          });
+        }
+        // 
+      } else if (show_markdown && cell.type === "markdown") {
+        let mdCell = cell as MarkdownCellModel;
+        let sendTimeout = -1;
+
+        if (!server.isCellRegistered(mdCell.id)) {
+          server.setCellRegistered(
+            mdCell.id,
+            mdCell.contentChanged
+          );
+
+          mdCell.contentChanged.connect((sender, args) => {
+            // subscribe to markdown content changes (debounced)
+            if (sendTimeout !== -1) {
+              clearTimeout(sendTimeout);
+            }
+
+            sendTimeout = setTimeout(() => {
+              let toSend = {
+                cell: mdCell.toJSON(),
+                ind: i,
+                kernel_id
+              };
+
+              server.updateDynamicNotebookCell(toSend);
+
+              // console.log("send md", toSend);
+              sendTimeout = -1;
+            }, 500);
+          });
+        }
+      }
+    }
+
+    let infoToSend = {
+      notebook: notebookJSON,
+      show_markdown: show_markdown,
+      kernel_id
+    };
+
+    server.sendNotebookDynamic(infoToSend);
+  }
 
   function sendNotebookTo(server: ServerConnection) {
     // get notebook reference
@@ -574,9 +607,7 @@ function addCommands(
 
           server.setCellRegistered(
             cellModel.id,
-            outputArea.changed,
-            mime,
-            outputData[mime]
+            outputArea.changed
           );
 
           // update on cell change
