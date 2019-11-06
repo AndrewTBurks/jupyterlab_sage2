@@ -249,7 +249,7 @@ export class ServerConnection {
   }
 
   // id = code cell ID, signal is object to connect/disconnect to/from
-  public setCellRegistered(id: string, signal: any, mime: string, cellData: string) {
+  public setCellRegistered(id: string, signal: any) {
     this._registeredCells[id] = signal;
   }
 
@@ -347,6 +347,26 @@ export class ServerConnection {
     }, false);
 
     sendFile.send(formdata);
+  }
+
+  public sendNotebookDynamic(data: {
+    notebook: any,
+    show_markdown: boolean,
+    kernel_id: string
+  }) {
+    // console.log("sendNotebookDynamic", data);
+
+    this._wsio.emit("sendNotebookDynamic", data);
+  }
+
+  public updateDynamicNotebookCell(data: {
+    cell: any,
+    ind: number,
+    kernel_id: string
+  }) {
+    // console.log("updateDynamicNotebookCell", data);
+
+    this._wsio.emit("updateDynamicNotebookCell", data);
   }
 
   private startEditing() {
