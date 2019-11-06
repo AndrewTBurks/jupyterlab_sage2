@@ -10,7 +10,10 @@ import { ServerInfo } from './server-info';
 import {
   FaNetworkWired,
   FaInfoCircle,
-  FaLink
+  FaLink,
+  FaTrash,
+  FaEdit,
+  FaShareSquare
 } from 'react-icons/fa';
 
 import {
@@ -42,14 +45,17 @@ export class ServerConnection {
   }
 
   // create vdom.VirtualElement method creates an editable or established server based on _editing state
-  static Element({connection} : {connection: ServerConnection}) : React.ReactElement<any> {
+  static Element({
+    connection,
+    setModalContent
+  }: { connection: ServerConnection, setModalContent: any }) : React.ReactElement<any> {
     let Card = connection._editing ? connection.EditableServer : connection.EstablishedServer;
 
-    return <Card />;
+    return <Card setModalContent={setModalContent}/>;
   }
 
   // construct vdom VirtualElement for an established server (no inputs)
-  private EstablishedServer(): React.ReactElement<any> {
+  private EstablishedServer(props: any): React.ReactElement<any> {
     // wrap this._remove in lambda
     let remove = () => {
       // close websocket
@@ -161,11 +167,24 @@ export class ServerConnection {
             <FaInfoCircle /> <ServerInfo version={this._serverInformation.version}/>
           </div>
         </div>
+        <div className="jp-SAGE2-serverButtons" style={{ marginBottom: 5, marginTop: 5 }}>
+          <button className="jp-SAGE2-serverButtonShared jp-SAGE2-button"
+            disabled={Object.keys(this._registeredCells).length ? true : false}
+            onClick={() => {
+              props.setModalContent(this);
+              // console.log(this._registeredCells);
+            }}>
+            <FaShareSquare />
+            Shared Content
+          </button>
+        </div>
         <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-buttonAccept jp-SAGE2-button" onClick={edit}>
+          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
+            <FaEdit />
             Edit
           </button>
-          <button className="jp-SAGE2-buttonOther jp-SAGE2-button" onClick={remove}>
+          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
+            <FaTrash />
             Remove
           </button>
         </div>
@@ -249,8 +268,11 @@ export class ServerConnection {
   }
 
   // id = code cell ID, signal is object to connect/disconnect to/from
-  public setCellRegistered(id: string, signal: any) {
-    this._registeredCells[id] = signal;
+  public setCellRegistered(id: string, signal: any, info?: any) {
+    this._registeredCells[id] = {
+      signal,
+      info
+    };
   }
 
   // accesors to set functions for remove, update, favoriting (plugin-wide behavior)
@@ -492,10 +514,15 @@ export class ServerConnection {
       console.log(data.id, idPieces)
       console.log(that._id, that._registeredCells);
 
-      // message from server on application close of Jupyter Window
+      // TODO: these two cases should be consolidated 
       if (that._id === idPieces[0] && that._registeredCells[idPieces[1]]) {
-        that._registeredCells[idPieces[1]].disconnect();
+        // message from server on application close of Jupyter Single Cell
+        that._registeredCells[idPieces[1]].signal.disconnect();
         delete that._registeredCells[idPieces[1]];
+      } else if (that._registeredCells[data.id]) {
+        // message from server on application close of Dynamic Notebook Cell
+        that._registeredCells[data.id].signal.disconnect();
+        delete that._registeredCells[data.id];
       }
     });
   }

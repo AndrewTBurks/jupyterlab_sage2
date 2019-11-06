@@ -103,9 +103,9 @@ function createMenu(app: JupyterFrontEnd): Menu {
   let menu = new Menu({ commands: commands });
 
   menu.title.label = 'SAGE2';
-  // menu.addItem({ command: CommandIDs.openWidget });
+  menu.addItem({ command: CommandIDs.openWidget });
 
-  // menu.addItem({ type: 'separator' });
+  menu.addItem({ type: 'separator' });
 
   menu.addItem({ command: CommandIDs.sendNotebookCellFav });
   menu.addItem({ command: CommandIDs.sendNotebookFav });
@@ -245,18 +245,18 @@ function addCommands(
     execute: args => {
 
       let sage2 = ReactWidget.create(
-      <UseSignal signal={ConnectionSignal} initialArgs={_SAGE2_Connections}>
-        {(_, connections: any) => 
-          <SAGE2 
-            connections={connections}
-            // setUpdater={(func: Function) => triggerWidgetUpdate = func}
-            addServer={() => {
-              commands.execute(CommandIDs.serverConnect, {});
-            }}
-          />
-        }
-      </UseSignal>
-      );
+        <UseSignal signal={ConnectionSignal} initialArgs={_SAGE2_Connections}>
+          {(_, connections: any) => 
+            <SAGE2 
+              connections={connections}
+              // setUpdater={(func: Function) => triggerWidgetUpdate = func}
+              addServer={() => {
+                commands.execute(CommandIDs.serverConnect, {});
+              }}
+            />
+          }
+        </UseSignal>
+        );
 
       // TODO: work to change to open widget if there is a SAGE2 widget
       // if (!tracker.currentWidget) {
@@ -271,12 +271,13 @@ function addCommands(
       sage2.title.label = "SAGE2";
       sage2.id = "jp-SAGE2-" + _SAGE2Instances++;
 
+      shell.add(sage2);
+
       // shell.add(sage2);
 
       // add sage2 widget to the tracker
       // tracker.add(sage2).then(() => {
       //   // add tab to main area
-      //   shell.addToMainArea(sage2);
 
       //   // switch to the tab
       //   shell.activateById(sage2.id);
@@ -489,14 +490,19 @@ function addCommands(
 
     for (let i = 0; i < notebook.model.cells.length; i++) {
       let cell = notebookCells.get(i);
+      let cellID = `${kernel_id}~${i}`;
 
       if (cell.type === "code") {
         let codeCell = cell as CodeCellModel;
 
-        if (!server.isCellRegistered(codeCell.id)) {
+        if (!server.isCellRegistered(cellID)) {
           server.setCellRegistered(
-            codeCell.id,
-            codeCell.outputs.changed
+            cellID,
+            codeCell.outputs.changed,
+            {
+              path: notebook.context.path,
+              kernel_id: notebook.session.kernel.id
+            }
           );
 
           codeCell.outputs.changed.connect((sender, args) => {
@@ -514,10 +520,14 @@ function addCommands(
         let mdCell = cell as MarkdownCellModel;
         let sendTimeout = -1;
 
-        if (!server.isCellRegistered(mdCell.id)) {
+        if (!server.isCellRegistered(cellID)) {
           server.setCellRegistered(
-            mdCell.id,
-            mdCell.contentChanged
+            cellID,
+            mdCell.contentChanged,
+            {
+              path: notebook.context.path,
+              kernel_id: notebook.session.kernel.id
+            }
           );
 
           mdCell.contentChanged.connect((sender, args) => {
@@ -607,7 +617,11 @@ function addCommands(
 
           server.setCellRegistered(
             cellModel.id,
-            outputArea.changed
+            outputArea.changed,
+            {
+              path: (shell.currentWidget as NotebookPanel).context.path,
+              kernel_id: (shell.currentWidget as NotebookPanel).session.kernel.id
+            }
           );
 
           // update on cell change
