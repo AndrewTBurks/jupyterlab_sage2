@@ -16,6 +16,7 @@ import {
 // import * as vdom from '@phosphor/virtualdom';
 
 import * as React from 'react';
+import SharedModal from "../components/shared-modal";
 
 
 import {
@@ -32,10 +33,10 @@ import {
 //   VDomModel, VDomRenderer
 // } from '@jupyterlab/apputils';
 
-// const {
-//   useState,
-//   useEffect
-// } = React;
+const {
+  useState,
+  // useEffect
+} = React;
 
 // let _SAGE2Instances = 0;
 
@@ -75,7 +76,13 @@ function SAGE2(props: Partial<SAGE2.IOptions> = {}) {
   // map connections to vdom VirtualNodes
 
   // let [ serverConnections, updateServerConnections ] = useState(props.connections);
-  let servers = props.connections.map((connection: ServerConnection, i) => <ServerConnection.Element key={i} connection={connection}/>);
+  let [modalContent, setModalContent] = useState(null);
+  let servers = props.connections.map((connection: ServerConnection, i) =>
+    <ServerConnection.Element
+      key={i}
+      connection={connection}
+      setModalContent={setModalContent}
+    />);
 
   // console.log(serverConnections);
 
@@ -90,6 +97,8 @@ function SAGE2(props: Partial<SAGE2.IOptions> = {}) {
     props.addServer();
   };
 
+  
+
   return (
     <div className="jp-SAGE2-body">
       <div className="jp-SAGE2-title">
@@ -102,6 +111,13 @@ function SAGE2(props: Partial<SAGE2.IOptions> = {}) {
         {/* <i className="fa fa-3x fa-plus-circle"></i> */}
         <FaPlus size={"2.5em"}/>
       </button>
+
+      <SharedModal 
+        {...{
+          modalContent,
+          setModalContent
+        }}
+      />
     </div>
   );
 }

@@ -332,15 +332,30 @@
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonEdit {
-  color: #ffffff;
-  background-color: #f0ad4e;
-  border-color: #eea236;
+  color: #e0e0e0;
+  font-weight: bold;
+  border: 2px solid #ffbd45;
+  background-color: #fb8c00;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonRemove {
-  color: #ffffff;
-  background-color: #d9534f;
-  border-color: #d43f3a;
+  color: #e0e0e0;
+  font-weight: bold;
+  border: 2px solid #ff6f60;
+  background-color: #e53935;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonShared {
+  color: #e0e0e0;
+  font-weight: bold;
+  border: 2px solid #6f74dd;
+  background-color: #3949ab;
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-buttom[disabled] {
+  border-color: #666;
+  background-color: #333;
+  color: #aaa;
 }
 
 .jp-SAGE2-connections .jp-SAGE2-socketLog {
@@ -569,4 +584,37 @@
     height: 58px;
     opacity: 0;
   }
+}
+
+
+.jp-SAGE2-body .jp-SAGE2-sharedContentModal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.jp-SAGE2-body .jp-SAGE2-modalOverlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  background: #000a;
+
+  display: flex;
+  flex-flow: row;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.jp-SAGE2-body .jp-SAGE2-modalContent {
+  background: #f0f0f0;
+  border: 2px solid #ccc;
+
+  flex: 0 0 500px;
+  min-height: 500px;
 }
