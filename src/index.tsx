@@ -500,6 +500,7 @@ function addCommands(
             cellID,
             codeCell.outputs.changed,
             {
+              cell_type: cell.type, 
               path: notebook.context.path,
               kernel_id: notebook.session.kernel.id
             }
@@ -525,6 +526,7 @@ function addCommands(
             cellID,
             mdCell.contentChanged,
             {
+              cell_type: cell.type, 
               path: notebook.context.path,
               kernel_id: notebook.session.kernel.id
             }
