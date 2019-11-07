@@ -168,24 +168,30 @@ export class ServerConnection {
           </div>
         </div>
         <div className="jp-SAGE2-serverButtons" style={{ marginBottom: 5, marginTop: 5 }}>
+          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
+            <FaEdit />{" "}
+            <span style={{ display: "inline-block" }}>
+              Edit
+            </span>
+          </button>
+          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
+            <FaTrash />{" "}
+            <span style={{ display: "inline-block" }}>
+              Remove
+            </span>
+          </button>
+        </div>
+        <div className="jp-SAGE2-serverButtons" style={{ marginBottom: 5, marginTop: 5 }}>
           <button className="jp-SAGE2-serverButtonShared jp-SAGE2-button"
-            disabled={Object.keys(this._registeredCells).length ? true : false}
+            // disabled={!Object.keys(this._registeredCells).length ? true : false}
             onClick={() => {
               props.setModalContent(this);
               // console.log(this._registeredCells);
             }}>
-            <FaShareSquare />
-            Shared Content
-          </button>
-        </div>
-        <div className="jp-SAGE2-serverButtons">
-          <button className="jp-SAGE2-serverButtonEdit jp-SAGE2-button" onClick={edit}>
-            <FaEdit />
-            Edit
-          </button>
-          <button className="jp-SAGE2-serverButtonRemove jp-SAGE2-button" onClick={remove}>
-            <FaTrash />
-            Remove
+            <FaShareSquare />{" "}
+            <span style={{ display: "inline-block" }}>
+              Shared Content
+            </span>
           </button>
         </div>
         <Log items={this._log}></Log>

@@ -331,28 +331,45 @@
   background-image: linear-gradient(var(--link) 10%, var(--link-d5) 40%, var(--link-d5) 60%, var(--link) 90%);
 }
 
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-button:hover {
+  transition: box-shadow 0.250s ease-in-out;
+}
+
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonEdit {
-  color: #e0e0e0;
+  color: #fff;
   font-weight: bold;
-  border: 2px solid #ffbd45;
-  background-color: #fb8c00;
+  box-shadow: inset 0 0 6px 1px var(--edit-l);
+  background-color: var(--edit-d);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonEdit:hover {
+  box-shadow: inset 0 0 0 4px var(--edit-l);
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonRemove {
-  color: #e0e0e0;
+  color: #fff;
   font-weight: bold;
-  border: 2px solid #ff6f60;
-  background-color: #e53935;
+  box-shadow: inset 0 0 6px 1px var(--remove-l);
+  background-color: var(--remove-d);
+}
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonRemove:hover {
+  box-shadow: inset 0 0 0 4px var(--remove-l);
 }
 
 .jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonShared {
-  color: #e0e0e0;
+  color: #fff;
   font-weight: bold;
-  border: 2px solid #6f74dd;
-  background-color: #3949ab;
+  box-shadow: inset 0 0 6px 1px var(--shared-l);
+  background-color: var(--shared-d);
 }
 
-.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-buttom[disabled] {
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-serverButtonShared:hover {
+  box-shadow: inset 0 0 0 4px var(--shared-l);
+}
+
+
+.jp-SAGE2-connections .jp-SAGE2-serverButtons .jp-SAGE2-button[disabled] {
   border-color: #666;
   background-color: #333;
   color: #aaa;
@@ -544,6 +561,15 @@
   --link-l20: #38D3F8;
   --link-d5: #0093B8;
   --link-d10: #0087AC;
+
+  --edit-l: #ffc046;
+  --edit-d: #ff8f00;
+
+  --remove-l: #ff6f60;
+  --remove-d: #e53935;
+
+  --shared-l: #6f74dd;
+  --shared-d: #3949ab;
 }
 
 /* spinner */
@@ -613,8 +639,39 @@
 
 .jp-SAGE2-body .jp-SAGE2-modalContent {
   background: #f0f0f0;
-  border: 2px solid #ccc;
+  /* border: 2px solid #ccc; */
+
+  box-shadow: 2px 4px 16px 8px #0006;
+
+  border-radius: 4px 4px 12px 12px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
   flex: 0 0 500px;
   min-height: 500px;
+}
+
+.jp-SAGE2-body .jp-SAGE2-modalContent .titlebar {
+  background: var(--shared-d);
+  border: 1px solid var(--shared-l);
+  border-bottom-width: 3px;
+
+  border-radius: 4px 4px 0 0;
+
+  display: flex;
+  align-content: center;
+
+  color: #e0e0e0;
+  font-style: italic;
+
+  padding: 8px;
+  flex: 0 0 0;
+
+  white-space: pre-wrap;
+}
+
+.jp-SAGE2-body .jp-SAGE2-modalContent .body {
+  flex: 1 0 0;
 }
