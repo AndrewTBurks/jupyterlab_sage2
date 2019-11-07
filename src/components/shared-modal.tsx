@@ -10,8 +10,13 @@ function SharedModal(props: any) {
   } = props;
 
   let modalStyle = useSpring({
-    opacity: modalContent ? 1 : 0
+    opacity: modalContent ? 1 : 0,
+    from: {
+      opacity: 0
+    }
   });
+
+  console.log(modalContent);
 
   return <animated.div className="jp-SAGE2-sharedContentModal"
     style={{
@@ -22,12 +27,15 @@ function SharedModal(props: any) {
     <div className="jp-SAGE2-modalOverlay" onClick={() => setModalContent(null)}>
 
       <div className="jp-SAGE2-modalContent" onClick={(evt) => evt.stopPropagation()}>
-        Modal Content Test
-        <div>
-          {modalContent && modalContent.name || "?"}
-        </div>
-        <div>
-          {modalContent && modalContent.url || "?"}
+        <div className="titlebar">
+          {"Shared to "}
+          <span style={{ fontStyle: "normal", fontWeight: "bold", color: "#fff" }}>
+            {modalContent && modalContent.name || "?"}
+          </span>
+          {" at "}
+          <a style={{ fontStyle: "normal", fontWeight: "bold", color: "#90caf9" }}>
+            {modalContent && modalContent.url || "?"}
+          </a>
         </div>
       </div>
     </div>
