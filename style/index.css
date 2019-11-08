@@ -7,11 +7,9 @@
 }
 
 .jp-SAGE2favicon {
-  background-image: url(./img/icon.png);
-  background-color: white;
+  background-image: url(./img/S2-512.png);
+  /* background-color: white; */
   background-position: center !important;
-  width: 24px !important;
-  border-radius: 2px;
 }
 
 .jp-SAGE2-uiWrapper {
@@ -622,7 +620,6 @@
   bottom: 0;
 }
 
-
 .jp-SAGE2-body .jp-SAGE2-modalOverlay {
   position: absolute;
   left: 0;
@@ -641,26 +638,24 @@
 
 .jp-SAGE2-body .jp-SAGE2-modalContent {
   background: #f0f0f0;
-  /* border: 2px solid #ccc; */
-
-  box-shadow: 2px 4px 40 12px #0006;
-
+  box-shadow: 2px 4px 16px 8px #0006;
   border-radius: 4px 4px 12px 12px;
 
   display: flex;
   flex-direction: column;
   align-items: stretch;
-
-  flex: 0 0 500px;
-  min-height: 500px;
+  
+  flex: 0 1 500px;
+  min-height: 80%;
+  margin: 10px;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .heading {
   font-weight: lighter;
   font-size: 16px;
-  padding: 8px;
+  padding: 8px 12px;
 
-  font-style: italic;
+  /* font-style: italic; */
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .notebook-name {
@@ -700,7 +695,6 @@
   align-items: center;
   padding: 4px;
   cursor: pointer;
-  min-width: unset;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .titlebar button.close:hover {
@@ -712,6 +706,14 @@
   flex-flow: row wrap;
 
   flex: 0 0 100px;
+
+  margin: 0 8px;
+  padding: 8px;
+  background: #d0d0d0;
+
+  box-shadow: inset 2px 1px 4px #0006;
+
+  border-radius: 8px;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .notebook-thumbnail {
@@ -723,8 +725,9 @@
   margin: 10px;
   padding: 5px;
 
-  border: 2px solid var(--sage2-gray-l20);
-  box-shadow: 2px 1px 4px var(--sage2-gray-l10);
+  border: 2px solid #fff;
+  background: white;
+  box-shadow: 2px 1px 8px var(--sage2-gray-l10);
   border-radius: 4px;
   cursor: zoom-in;
 
@@ -744,11 +747,6 @@
   box-shadow: 4px 2px 8px var(--shared-l);
 }
 
-.jp-SAGE2-body .jp-SAGE2-modalContent .notebook-thumbnail.selected {
-  border: 2px solid var(--shared-l);
-  box-shadow: 4px 2px 8px var(--shared-l);
-}
-
 .jp-SAGE2-body .jp-SAGE2-modalContent .notebook-title {
   font-family: "Courier New";
   display: flex;
@@ -758,7 +756,7 @@
 
   font-size: 12px;
   font-weight: bold;
-  color: var(--shared-d);
+  color: var(--sage2-gray-d10);
 
   margin: 0 5px;
   flex: 1;
@@ -787,11 +785,21 @@
 
   flex: 1 0 100px;
 
-  margin: 5px;
+  margin: 0 8px;
+  margin-bottom: 10px;
+
+  padding: 8px;
+  background: #d0d0d0;
+
+  border-radius: 8px;
+
+  box-shadow: inset 2px 1px 4px #0006;
+
+  overflow-y: scroll;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .cell-thumbnail {
-  margin: 5px;
+  margin: 12px 4px;
   /* display: flex;
   flex-direction: column;
 
@@ -799,17 +807,25 @@
 
   flex: 0 0 50px;
 
-  border: 1px solid var(--shared-l);
+  background: #fff;
+  /* border: 1px solid #666; */
   border-radius: 5px;
 
-  box-shadow: 2px 1px 4px var(--sage2-gray-l10);
+  box-shadow: 2px 1px 6px var(--sage2-gray-l10);
   /* overflow-y: hidden; */
 }
+
 .jp-SAGE2-body .jp-SAGE2-modalContent .cell-thumbnail .cell-info {
   display: flex;
 
   align-items: flex-start;
   justify-content: space-between;
+
+  margin-bottom: 4px;
+  background: #e0e0e0;
+
+  border-bottom: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .cell-thumbnail .cell-index {
@@ -817,24 +833,18 @@
   font-family: "Courier New", Courier, monospace;
   padding: 2px;
 
-  color: white;
+  color: #333;
+  font-weight: bold;
   font-size: 12px;
-
-  background: var(--shared-d);
-
-  border: 0px solid var(--shared-l);
-  border-width: 0 1px 1px 0;
-  border-radius: 0 0 5px 0;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .cell-thumbnail .cell-type {
   display: inline-block;
-  font-family: "Courier New", Courier, monospace;
   font-size: 12px;
-  padding: 5px;
+  font-weight: bold;
+  padding: 2px 5px 1px;
 
-  flex: 1;
-  text-align: center;
+  color: #333;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .cell-thumbnail .cell-actions {
@@ -842,16 +852,20 @@
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .unshare-button {
-  background: var(--remove-l);
-  border: 1px solid var(--remove-d);
-  color: white;
+  background: white;
+  border: 1px solid var(--remove-l);
+  color: #333;
   font-weight: bold;
 
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.25s ease-in-out;
+  transition: background 0.25s ease-in-out, color 0.25s ease-in-out,
+    border-color 0.25s ease-in-out;
 }
 
 .jp-SAGE2-body .jp-SAGE2-modalContent .unshare-button:hover {
-  background: var(--remove-d);
+  background: var(--remove-l);
+  color: #fff;
+  border-color: var(--remove-d);
+  /* background: var(--remove-d); */
 }

@@ -308,17 +308,6 @@ export class ServerConnection {
       // create image to get correct size
       var i = new Image();
       i.onload = function () {
-        let imageToSend = {
-          src: base64,
-          sender: window.location.href,
-          title,
-          url: window.location.href,
-          mime,
-          width: i.width,
-          height: i.height
-        };
-        
-        console.log(imageToSend);
         
         that._wsio.emit('updateJupyterSharing', {
           id: `${that._id}~${cellID}`,
@@ -328,7 +317,6 @@ export class ServerConnection {
           height: i.height,
           title,
           code
-          // cellId: cellId
         });
 
         return {
@@ -337,7 +325,6 @@ export class ServerConnection {
           width: i.width,
           height: i.height,
           title,
-          // cellId: cellId
         };
 
         // that._wsio.emit("loadImageFromBuffer", imageToSend);
@@ -371,7 +358,6 @@ export class ServerConnection {
     //   console.log(ev);
     // }, false);
     sendFile.addEventListener('load', function(ev) {
-      console.log(this.response);
     }, false);
 
     sendFile.send(formdata);
@@ -395,6 +381,12 @@ export class ServerConnection {
     // console.log("updateDynamicNotebookCell", data);
 
     this._wsio.emit("updateDynamicNotebookCell", data);
+  }
+
+  public stopSharingNotebookCells(cells: any[]) {
+    this._wsio.emit("removeDynamicNotebookCells", {
+      cells
+    });
   }
 
   private startEditing() {
@@ -517,8 +509,6 @@ export class ServerConnection {
 
     this._wsio.on('jupyterShareTerminated', function (data: any) {
       let idPieces = data.id.split("~");
-      console.log(data.id, idPieces)
-      console.log(that._id, that._registeredCells);
 
       // TODO: these two cases should be consolidated 
       if (that._id === idPieces[0] && that._registeredCells[idPieces[1]]) {
