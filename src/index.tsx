@@ -240,23 +240,22 @@ function addCommands(
   commands.addCommand(CommandIDs.openWidget, {
     label: "SAGE2 Portal",
     // name: "SAGE2",
-    iconClass: 'jp-SAGE2Icon',
+    iconClass: "jp-SAGE2favicon",
     caption: "Open the SAGE2 Connection Panel",
     execute: args => {
-
       let sage2 = ReactWidget.create(
         <UseSignal signal={ConnectionSignal} initialArgs={_SAGE2_Connections}>
-          {(_, connections: any) => 
-            <SAGE2 
+          {(_, connections: any) => (
+            <SAGE2
               connections={connections}
               // setUpdater={(func: Function) => triggerWidgetUpdate = func}
               addServer={() => {
                 commands.execute(CommandIDs.serverConnect, {});
               }}
             />
-          }
+          )}
         </UseSignal>
-        );
+      );
 
       // TODO: work to change to open widget if there is a SAGE2 widget
       // if (!tracker.currentWidget) {
@@ -265,7 +264,7 @@ function addCommands(
       // } else {
       //   tracker.has(SAGE2)
       // }
-      
+
       sage2.title.closable = true;
       sage2.title.icon = "jp-SAGE2favicon";
       sage2.title.label = "SAGE2";
