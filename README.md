@@ -26,7 +26,7 @@ A JupyterLab extension to integrate SAGE2 into the JupyterLab scientific workflo
 
 The goal of this extension is to use [SAGE2](http://sage2.sagecommons.org/) with [JupyterLab](https://github.com/jupyterlab) to integrate existing data science workflows into the collaborative software.
 
-<!-- ### *Disclaimer: A SAGE2 server must be running version `3.0.201` or newer to use this JupyterLab functionality.* -->
+### ***Disclaimer**: A SAGE2 server must be running version `5.0.0` or newer to use all current JupyterLab functionality.*
 
 This extension to JupyterLab allows a user to simultaneously connect to multiple SAGE2 servers and share JupyterLab content with SAGE2, including:
 - __Single Cells__ from a Notebook
