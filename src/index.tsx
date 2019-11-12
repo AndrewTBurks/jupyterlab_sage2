@@ -109,14 +109,15 @@ function createMenu(app: JupyterFrontEnd): Menu {
 
   menu.addItem({ command: CommandIDs.sendNotebookCellFav });
   menu.addItem({ command: CommandIDs.sendNotebookFav });
+  menu.addItem({ command: CommandIDs.sendCodeFav });
+  menu.addItem({ command: CommandIDs.sendCodeMdFav });
   
   menu.addItem({ type: 'separator' });
   
   menu.addItem({ command: CommandIDs.sendNotebookCell });
   menu.addItem({ command: CommandIDs.sendNotebook });
-
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ command: CommandIDs.subscribeNotebook });
+  menu.addItem({ command: CommandIDs.sendCode });
+  menu.addItem({ command: CommandIDs.sendCodeMd });
 
   return menu;
 }
@@ -136,16 +137,25 @@ namespace CommandIDs {
   const sendNotebookCellFav = 'sage2:send-notebook-cell-fav';
 
   export
-  const sendNotebookFav = 'sage2:send-notebook-fav';
+    const sendNotebookFav = 'sage2:send-notebook-fav';
+
+  export
+    const sendCodeFav = 'sage2:send-code-fav';
+
+  export
+    const sendCodeMdFav = 'sage2:send-code-md-fav';
 
   export
   const sendNotebookCell = 'sage2:send-notebook-cell';
 
   export
-  const sendNotebook = 'sage2:send-notebook';
+    const sendNotebook = 'sage2:send-notebook';
 
   export
-  const subscribeNotebook = 'sage2:subscribe-notebook';
+    const sendCode = 'sage2:send-code';
+
+  export
+    const sendCodeMd = 'sage2:send-code-md';
 };
 
 // similar render priority, specifying the ranking of types which can be handled by SAGE2
@@ -243,6 +253,16 @@ function addCommands(
     iconClass: "jp-SAGE2favicon",
     caption: "Open the SAGE2 Connection Panel",
     execute: args => {
+      // open SAGE2 widget as singleton if exists
+      let w;
+      let widgets = shell.widgets();
+      while (w = widgets.next()) {
+        if (w.title.label === "SAGE2") {
+          shell.activateById(w.id);
+          return w;
+        }
+      }
+
       let sage2 = ReactWidget.create(
         <UseSignal signal={ConnectionSignal} initialArgs={_SAGE2_Connections}>
           {(_, connections: any) => (
@@ -257,30 +277,14 @@ function addCommands(
         </UseSignal>
       );
 
-      // TODO: work to change to open widget if there is a SAGE2 widget
-      // if (!tracker.currentWidget) {
-      //   let sage2 = new SAGE2();
 
-      // } else {
-      //   tracker.has(SAGE2)
-      // }
-
+      // otherwise create a new SAGE2
       sage2.title.closable = true;
       sage2.title.icon = "jp-SAGE2favicon";
       sage2.title.label = "SAGE2";
       sage2.id = "jp-SAGE2-" + _SAGE2Instances++;
 
       shell.add(sage2);
-
-      // shell.add(sage2);
-
-      // add sage2 widget to the tracker
-      // tracker.add(sage2).then(() => {
-      //   // add tab to main area
-
-      //   // switch to the tab
-      //   shell.activateById(sage2.id);
-      // });
 
       return sage2;
     }
@@ -341,7 +345,7 @@ function addCommands(
     label: "Send Cell to ...",
     execute: args => {
       return showDialog({
-        title: "Send a JupyterNotebook to a SAGE2 Server",
+        title: "Send this Notebook Cell to a SAGE2 Server",
         body: `Choose a server to send to: `,
         buttons: [
           // use spread operator to create buttos for all SAGE2 connections
@@ -378,10 +382,10 @@ function addCommands(
   });
 
   commands.addCommand(CommandIDs.sendNotebook, {
-    label: "Send Notebook to ...",
+    label: "Send Notebook File to ...",
     execute: args => {
       return showDialog({
-        title: "Send a JupyterNotebook to a SAGE2 Server",
+        title: "Send this Jupyter Notebook File to a SAGE2 Server",
         body: `Choose a server to send to: `,
         buttons: [
           // use spread operator to create buttos for all SAGE2 connections
@@ -441,32 +445,66 @@ function addCommands(
     }
   });
 
-  commands.addCommand(CommandIDs.subscribeNotebook, {
-    label: "★ Send Notebook",
+  commands.addCommand(CommandIDs.sendCodeFav, {
+    label: "★ Send All Code",
     execute: args => {
       let server = fav_SAGE2;
 
+      sendNotebookToDynamic(
+        server,
+        false
+      );
+    },
+    isEnabled: () => {
+      return hasFavoriteSAGE2() && hasNotebookToSend();
+    }
+  });
+
+  commands.addCommand(CommandIDs.sendCodeMdFav, {
+    label: "★ Send Code and MD",
+    execute: args => {
+      let server = fav_SAGE2;
+
+      sendNotebookToDynamic(
+        server,
+        true
+      );
+    },
+    isEnabled: () => {
+      return hasFavoriteSAGE2() && hasNotebookToSend();
+    }
+  });
+
+  commands.addCommand(CommandIDs.sendCode, {
+    label: "Send All Code to ...",
+    execute: args => {
       return showDialog({
-        title: "Share a Notebook Dynamically to a SAGE2 Server",
-        body: `Choose content to send:`,
+        title: "Send all Code to a SAGE2 Server",
+        body: `Choose a server to send all Code Cells to, dynamically: `,
         buttons: [
-          Dialog.createButton({
-            label: "Code",
-            caption: "Code Only",
-            className: "jp-SAGE2-dialogButton"
-          }),
-          Dialog.createButton({
-            label: "Code+MD",
-            caption: "Code and MD",
-            className: "jp-SAGE2-dialogButton"
-          }),
+          // use spread operator to create buttos for all SAGE2 connections
+          ..._SAGE2_Connections.map(connection =>
+            Dialog.createButton({
+              label: connection.name,
+              caption: connection.url,
+              className: "jp-SAGE2-dialogButton"
+            })
+          ),
           Dialog.cancelButton()
         ]
       }).then(result => {
         if (result.button.accept) {
+          // get selected connection reference
+          let index = ArrayExt.findFirstIndex(
+            _SAGE2_Connections,
+            conn => conn.url === result.button.caption
+          );
+
+          let connection = _SAGE2_Connections[index];
+
           sendNotebookToDynamic(
-            server,
-            result.button.caption === "Code Only" ? false : true
+            connection,
+            false
           );
         } else {
           console.log("Cancel send operation");
@@ -475,7 +513,49 @@ function addCommands(
       });
     },
     isEnabled: () => {
-      return hasFavoriteSAGE2() && hasNotebookToSend();
+      return hasSAGE2() && hasNotebookToSend();
+    }
+  });
+
+  commands.addCommand(CommandIDs.sendCodeMd, {
+    label: "Send Code and MD to ...",
+    execute: args => {
+      return showDialog({
+        title: "Send all Code and Markdown to a SAGE2 Server",
+        body: `Choose a server to send all Code and Makrdown Cells to, dynamically: `,
+        buttons: [
+          // use spread operator to create buttos for all SAGE2 connections
+          ..._SAGE2_Connections.map(connection =>
+            Dialog.createButton({
+              label: connection.name,
+              caption: connection.url,
+              className: "jp-SAGE2-dialogButton"
+            })
+          ),
+          Dialog.cancelButton()
+        ]
+      }).then(result => {
+        if (result.button.accept) {
+          // get selected connection reference
+          let index = ArrayExt.findFirstIndex(
+            _SAGE2_Connections,
+            conn => conn.url === result.button.caption
+          );
+
+          let connection = _SAGE2_Connections[index];
+
+          sendNotebookToDynamic(
+            connection,
+            true
+          );
+        } else {
+          console.log("Cancel send operation");
+          return;
+        }
+      });
+    },
+    isEnabled: () => {
+      return hasSAGE2() && hasNotebookToSend();
     }
   });
 
