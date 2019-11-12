@@ -410,12 +410,13 @@ export class ServerConnection {
       // reset websocket
       if (this._wsio) {
         this._wsio.close();
-        this._wsio = null;
-        this._connected = false;
       }
 
+      this._wsio = null;
+      this._connected = false;
+      this._isConnecting = true;
+      
       // reset registered update cells
-
       for (let cellId of Object.keys(this._registeredCells)) {
         this._registeredCells[cellId].disconnect();
       }
@@ -460,7 +461,6 @@ export class ServerConnection {
       });
       
       // update UI
-      this._isConnecting = true;
       this._update();
     }
 
