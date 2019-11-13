@@ -268,6 +268,10 @@ export class ServerConnection {
     this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
   }
 
+  get id() {
+    return this._id;
+  }
+
   // check if the cell id exists within the connection (as a receiver of changes)
   public isCellRegistered(id : string) {
     return this._registeredCells[id];
@@ -406,7 +410,7 @@ export class ServerConnection {
     this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
 
     // if it needs to be reset because url is new
-    if (oldUrl !== this._url) {
+    if (oldUrl !== this._url || !this._connected) {
       // reset websocket
       if (this._wsio) {
         this._wsio.close();

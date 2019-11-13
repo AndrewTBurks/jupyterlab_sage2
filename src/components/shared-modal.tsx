@@ -29,7 +29,7 @@ function SharedModal(props: any) {
           return {
             key,
             info: cell.info,
-            ind: key.split("~")[1]
+            ind: cell.info.index
           };
         }),
         cell => {
@@ -192,7 +192,7 @@ function CellThumbnail(props: any) {
         style={{ whiteSpace: "nowrap", cursor: "help" }}
         title={`Cell Number ${cell.ind + 1}, ${cell.info.cell_type}`}
       >
-        <span className="cell-index">[{cell.ind}]</span>
+        <span className="cell-index">[{cell.ind + (cell.ind !== "?" ? 1 : "")}]</span>
         <span className="cell-type">
           {cell.info.cell_type === "code" ? <FaCode /> : <FaMarkdown />}
         </span>
