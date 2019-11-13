@@ -579,7 +579,8 @@ function addCommands(
             cellID,
             codeCell.outputs.changed,
             {
-              cell_type: cell.type, 
+              cell_type: cell.type,
+              index: i,
               path: notebook.context.path,
               kernel_id: notebook.session.kernel.id
             }
@@ -606,6 +607,7 @@ function addCommands(
             mdCell.contentChanged,
             {
               cell_type: cell.type, 
+              index: i,
               path: notebook.context.path,
               kernel_id: notebook.session.kernel.id
             }
@@ -697,9 +699,11 @@ function addCommands(
           console.log("Register new Cell for updates", cellModel);
 
           server.setCellRegistered(
-            cellModel.id,
+            `${server.id}~${cellModel.id}`,
             outputArea.changed,
             {
+              cell_type: "code",
+              index: "?",
               path: (shell.currentWidget as NotebookPanel).context.path,
               kernel_id: (shell.currentWidget as NotebookPanel).session.kernel.id
             }
