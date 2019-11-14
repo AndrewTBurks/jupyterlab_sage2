@@ -488,6 +488,11 @@ export class ServerConnection {
       that._connected = false;
       that._isConnecting = false;
 
+      for (let cellId of Object.keys(that._registeredCells)) {
+        that._registeredCells[cellId].disconnect();
+      }
+      that._registeredCells = {};
+
       that._update();
     });
 
