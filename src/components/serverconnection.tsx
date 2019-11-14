@@ -422,7 +422,9 @@ export class ServerConnection {
       
       // reset registered update cells
       for (let cellId of Object.keys(this._registeredCells)) {
-        this._registeredCells[cellId].disconnect();
+        that._registeredCells[cellId]
+          && that._registeredCells[cellId].disconnect
+          && that._registeredCells[cellId].disconnect();
       }
       this._registeredCells = {};
 
@@ -489,7 +491,9 @@ export class ServerConnection {
       that._isConnecting = false;
 
       for (let cellId of Object.keys(that._registeredCells)) {
-        that._registeredCells[cellId].disconnect();
+        that._registeredCells[cellId]
+          && that._registeredCells[cellId].disconnect
+          && that._registeredCells[cellId].disconnect();
       }
       that._registeredCells = {};
 
