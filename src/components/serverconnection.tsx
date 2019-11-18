@@ -404,6 +404,7 @@ export class ServerConnection {
     this._editing = false;
 
     let oldUrl = this._url;
+    let that = this;
 
     // ensure correct URL formatting
     this._name = name;
@@ -434,7 +435,6 @@ export class ServerConnection {
       // unfavorite
       this._favorite(false);
 
-      let that = this;
   
       this._wsio = new WebsocketIO(this._url.replace("http", "ws"));
       this._wsio.logger = this.log.bind(this); // pass logging method for methods into WebsocketIO
