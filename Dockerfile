@@ -7,7 +7,7 @@ COPY . /tmp/jupyterlab_sage2/
 
 # force update JupyterLab, etc. to ^1.2.1 compatability
 RUN conda install --quiet --yes \
-  'jupyterlab=1.2.1' && \
+  'jupyterlab=1.2.3' && \
   conda clean -tipsy && \
   jupyter labextension install /tmp/jupyterlab_sage2/ && \
   npm cache clean --force && \
