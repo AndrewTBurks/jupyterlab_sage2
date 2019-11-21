@@ -2,6 +2,9 @@ import { DisposableDelegate } from '@phosphor/disposable/lib';
 
 import * as React from 'react';
 
+// @ts-ignore
+import md5 from '../md5.js';
+
 import WebsocketIO from '../websocket.io';
 
 import { Log } from './log';
@@ -204,12 +207,14 @@ export class ServerConnection {
     // wrap this.saveEdits in lambda
     let nameInput = useRef<any>();
     let urlInput = useRef<any>();
+    let pwInput = useRef<any>();
 
     let save = useCallback(() => {
       this.saveEdits(
         nameInput.current.value,
-        urlInput.current.value)
-    }, [nameInput.current, urlInput.current]);
+        urlInput.current.value,
+        pwInput.current.value)
+    }, [nameInput.current, urlInput.current, pwInput.current]);
     
     // let that = this;
     // let nameChange = function (event: React.FormEvent<HTMLInputElement>) {
@@ -238,6 +243,13 @@ export class ServerConnection {
             <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
               SAGE<span className="SAGE2-gray-font" >2</span>
             </span> URL <input className="SAGE2-url" ref={urlInput} defaultValue={this._url} />
+          </label>
+        </div>
+        <div className="jp-SAGE2-inputField">
+          <label>
+            <span className="SAGE2-green-font" style={{fontWeight: "bold"}}>
+              SAGE<span className="SAGE2-gray-font" >2</span>
+            </span> Password <input ref={pwInput} defaultValue={""} type="password" />
           </label>
         </div>
         <div className="jp-SAGE2-serverButtons" style={{marginBottom: "5px"}}>
@@ -400,7 +412,7 @@ export class ServerConnection {
     this._update();
   }
 
-  private saveEdits(name: string, url: string) {
+  private saveEdits(name: string, url: string, pw: string) {
     this._editing = false;
 
     let oldUrl = this._url;
@@ -409,6 +421,7 @@ export class ServerConnection {
     // ensure correct URL formatting
     this._name = name;
     this._url = url.indexOf("http://") || url.indexOf("https://") ? url : "http://" + url;
+    this._pw = md5(pw);
 
     // if it needs to be reset because url is new
     if (oldUrl !== this._url || !this._connected) {
@@ -458,7 +471,8 @@ export class ServerConnection {
             version: true,
             time: false,
             console: false
-          }
+          },
+          session: that._pw
         };
         // add client and request file listing
         that._wsio.emit('addClient', clientDescription);
@@ -554,6 +568,8 @@ export class ServerConnection {
   // general server info
   private _name : string = "SAGE2 Server";
   private _url : string = "http://sage2.server.address.com";
+  private _pw : string = "";
+
   private _id : string = null;
   private _serverInformation: any = {};
 

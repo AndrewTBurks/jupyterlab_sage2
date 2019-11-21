@@ -31,17 +31,16 @@
     "prepare": "npm run clean && npm run build"
   },
   "dependencies": {
-    "lodash": "^4.17.15",
-    "react": "~16.8.0",
-    "react-icons": "^3.7.0",
-    "react-spring": "^8.0.27",
     "@jupyterlab/application": "^1.2.0",
     "@jupyterlab/launcher": "^1.2.0",
     "@jupyterlab/mainmenu": "^1.2.0",
-    "@jupyterlab/notebook": "^1.2.0"
+    "@jupyterlab/notebook": "^1.2.0",
+    "lodash": "^4.17.15",
+    "react": "~16.8.0",
+    "react-icons": "^3.7.0",
+    "react-spring": "^8.0.27"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "devDependencies": {
     "@types/lodash": "^4.14.145",
     "@types/react": "^16.8.0",
